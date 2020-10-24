@@ -17,7 +17,7 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
       - [Dataset 2](https://www.kaggle.com/noriuk/us-educational-finances)
           - Interesting data b/c education is important especially in
             current political climate
-          - Tonnar found a broader data set maybe merge them together?
+          - Tonnar found a broader dataset maybe merge them together?
 
 ## Jay’s Data Sets
 
