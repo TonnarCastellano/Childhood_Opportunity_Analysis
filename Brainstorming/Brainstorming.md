@@ -7,8 +7,7 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
 
 1.  Spotify
       - [Dataset 1](https://www.kaggle.com/nadintamer/top-spotify-tracks-of-2018)
-      - [Dataset 1
-        part 2](https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks?select=data_by_artist.csv)
+      - [Dataset 1 part 2](https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks?select=data_by_artist.csv)
           - This is the forerunner for favorite data set
           - Novel idea and data
           - Plenty of variables and observations
