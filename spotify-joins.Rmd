@@ -1,0 +1,45 @@
+
+```{r}
+# load libraries
+library(tidyverse)
+library(readr)
+
+# read in data
+data <- read_csv("spotify/data.csv")
+top2018 <- read_csv("spotify/top2018.csv")
+
+# explore data sets to be joined
+dim(data)
+dim(top2018)
+names(data)
+names(top2018)
+
+colnames(top2018) %in% colnames(data) # see what columns are in both data sets
+
+# check common columns of both data sets are standardized
+data_id <- data %>% 
+  filter(year == 2018 & name == "God's Plan") 
+top2018_id <- top2018 %>% 
+  filter(name == "God's Plan")
+data_id[,c("id", "name", "artists", "danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "duration_ms")] == top2018_id[,-16] # shows id, artists, instrumentalness, and valence are not standardized
+data_id[,c("id", "artists", "instrumentalness", "valence")]
+top2018_id[,c("id", "artists", "instrumentalness", "valence")]
+
+# standardize columns
+data$id = substr(data$id,1,nchar(data$id)-1) # standardize 'id' column in 'data' to remove additional character at the end 
+data$artists = substr(data$artists,3,nchar(data$artists)-2) # standardize 'artists' column in 'data' to remove [' at the beging and and end
+data_id <- data %>% 
+  filter(year == 2018 & name == "God's Plan") 
+top2018_id <- top2018 %>% 
+  filter(name == "God's Plan") 
+data_id[,c("id", "name", "artists", "danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "duration_ms")] == top2018_id[,-16]
+
+# I cannot figure out why these are not equal
+top2018_id[,c("instrumentalness", "valence")] == data_id[,c("instrumentalness", "valence")]
+top2018_id[,c("instrumentalness", "valence")]  
+data_id[,c("instrumentalness", "valence")]
+```
+
+
+
+
