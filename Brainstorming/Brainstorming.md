@@ -15,7 +15,7 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
           - Maybe a bit too novel making it hard for EDA?
 2.  Education Spending
       - [Dataset 2](https://www.kaggle.com/noriuk/us-educational-finances)
-          - Interesting data b/c education is important especially in
+          - Interesting data because education is important especially in
             current political climate
           - Tonnar found a broader dataset maybe merge them together?
 
@@ -28,8 +28,8 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
           - Too hard to work with unfortunately
 2.  BMI Information
       - [Dataset 2](http://www.ncdrisc.org/data-downloads-adiposity.html)
-          - Fairly intruiging this is a big health crisis
-          - Maybe a bit to one dimensional to work
+          - Fairly intriguing this is a big health crisis
+          - May be a bit too one dimensional to work
 
 ## Soyeon’s Data Sets
 
