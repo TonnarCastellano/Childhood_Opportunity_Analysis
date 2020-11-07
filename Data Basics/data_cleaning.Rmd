@@ -1,6 +1,5 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Data Cleaning"
 ---
 
 
@@ -8,6 +7,7 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 ```
+
 
 #Data Cleaning
 
