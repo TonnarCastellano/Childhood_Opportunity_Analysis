@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+#Necessary Libraries
+```{r}
+library(tidyverse)
+```
+
+#Data Cleaning
+
+##Basic importating
+so many data points the nashville ones 
+```{r message=FALSE, warning=FALSE}
+df <- read_csv('data.csv')
+df_nash <- df %>% filter(msaname15 == 'Nashville-Davidson--Murfreesboro--Franklin, TN Metro Area') 
+```
+
+##Basic Exporlation
+```{r}
+dim(df_nash)
+head(df_nash)
+summary(df_nash)
+```
+
+##Cleaning Data Columns
+Most of the columns are hard to understand tried to make it easier
+```{r}
+df_nash <- df_nash %>% rename(top100 = in100) %>% 
+  rename(metro_area = msaid15) %>% 
+  rename( AP_Placement = ED_APENR) %>% 
+  rename(metro_name=msaname15) %>% 
+  rename(pop_under_18= pop)  %>% 
+  rename(adult_edu_attainment_perc = ED_ATTAIN) %>% 
+  rename(college_per_18_to_24=ED_COLLEGE) %>% 
+  rename(nursey_school_perc=ED_ECENROL) %>% 
+  rename(high_grad_rate=ED_HSGRAD) %>% 
+  rename(third_grade_math_prof=ED_MATH) %>% 
+  rename(third_grade_reading_prof=ED_READING) %>% 
+  rename(school_poverty_perc=ED_SCHPOV) %>% 
+  rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
+  rename(early_education_centers=ED_PRXECE) %>% 
+  rename(Egood_early_education_centers=ED_PRXHQECE) %>% 
+  rename(access_to_food=HE_FOOD) %>% 
+  rename(extreme_heat=HE_HEAT) %>% 
+  rename(health_insurance=HE_HLTHINS) %>% 
+  rename(ozone_amount=HE_OZONE) %>% 
+  rename(access_to_green=HE_GREEN) %>% 
+  rename(Walkability=HE_WALK) %>% 
+  rename(housing_vacancy_rate=HE_VACANCY) %>% 
+  rename(waste_dump_sites=HE_SUPRFND) %>% 
+  rename(aribone_microparticles=HE_PM25) %>% 
+  rename(pollutants=HE_RSEI) %>% 
+  rename(home_ownership=SE_HOME) %>% 
+  rename(highskill_employe=SE_OCC) %>% 
+  rename(median_income=SE_MHE) %>% 
+  rename(employement_rate=SE_EMPRAT) %>% 
+  rename(commute_duration=SE_JOBPROX) %>% 
+  rename(single_head_houses=SE_SINGLE)
+```
+
+Creates a new dataframe that gives us a count of the na's in each variable column
+```{r message=FALSE, warning=FALSE}
+extra_NA<- df_nash %>% 
+  select_if(function(x) any(is.na(x))) %>% 
+  summarise_each(funs(sum(is.na(.))))
+```
+
