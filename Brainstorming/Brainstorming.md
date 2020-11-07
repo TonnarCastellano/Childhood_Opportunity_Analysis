@@ -7,8 +7,7 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
 
 1.  Spotify
       - [Dataset 1](https://www.kaggle.com/nadintamer/top-spotify-tracks-of-2018)
-      - [Dataset 1
-        part 2](https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks?select=data_by_artist.csv)
+      - [Dataset 1 part 2](https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks?select=data_by_artist.csv)
           - This is the forerunner for favorite data set
           - Novel idea and data
           - Plenty of variables and observations
@@ -50,7 +49,7 @@ Ty Painter, Jay Kim, Soyeon Park, and Tonnar Castellano
           - Too serious for this project
           - Amount of data is overwhelming nearly 1m observations
 2.  Childhood Education
-      - [Dataset 2](http://data.diversitydatakids.org/dataset/coi20-child-opportunity-index-2-0-database/resource/44ee1ea6-a3df-4af3-93b7-c4695d5ab6a6)
+      - [Dataset 2](http://data.diversitydatakids.org/dataset/coi20-child-opportunity-index-2-0-database/resource/f16fff12-b1e5-4f60-85d3-3a0ededa30a0)
           - Interesting data b/c education is important in current
             political climate
           - Second place

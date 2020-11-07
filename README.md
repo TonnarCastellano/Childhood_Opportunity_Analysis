@@ -1,4 +1,6 @@
 # eda20-team5-project
 Final Project
 
-Ty, Tonnar, Soyeon, and Jay
+Team: Ty, Tonnar, Soyeon, and Jay.
+
+We offically decided to use childhood opportunity index. 
