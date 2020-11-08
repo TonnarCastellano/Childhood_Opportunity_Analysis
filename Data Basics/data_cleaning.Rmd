@@ -1,5 +1,5 @@
 ---
-title: "EDA_team5_final"
+title: "Data Cleaning"
 author: "Jay Kim, Soyeon Park, Tonnar Castellano, Ty Painter"
 ---
 
