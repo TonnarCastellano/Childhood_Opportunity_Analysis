@@ -87,7 +87,7 @@ df <- df %>%
 Deleted unnecessary columns (They have the same values.)
 
 ```{r}
-df <- df %>% select(-state, -no_mean, -statefips, -stateusps, -num_waste_dump_site)
+df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)
 ```
 
 This is the final data after cleaning columns and values.
