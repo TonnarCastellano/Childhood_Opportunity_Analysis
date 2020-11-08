@@ -32,53 +32,25 @@ Since there are so many observations in the data, we are going to focus on a spe
 
 ```{r message=FALSE, warning=FALSE}
 # Separate the column "msaname15" into "city", "state", "size" and "no_mean"
-df_tn <- df %>% 
-  separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ") %>% 
-  filter(state == "TN")
-```
-
-Changed the cities' name into clean one.
-
-```{r}
-# Clean the city names
-df_tn$city[which(df_tn$city == "Knoxville,")] <- "Knoxville"
-df_tn$city[which(df_tn$city == "Shelbyville,")] <- "Shelbyville"
-df_tn$city[which(df_tn$city == "Cleveland,")] <- "Cleveland"
-df_tn$city[which(df_tn$city == "Nashville-Davidson--Murfreesboro--Franklin,")] <- "Nashville"
-df_tn$city[which(df_tn$city == "Jackson,")] <- "Jackson"
-df_tn$city[which(df_tn$city == "Newport,")] <- "Newport"
-df_tn$city[which(df_tn$city == "Tullahoma-Manchester,")] <- "Tullahoma"
-df_tn$city[which(df_tn$city == "Crossville,")] <- "Crossville"
-df_tn$city[which(df_tn$city == "Dyersburg,")] <- "Dyersburg"
-df_tn$city[which(df_tn$city == "Greeneville,")] <- "Greeneville"
-df_tn$city[which(df_tn$city == "Morristown,")] <- "Morristown"
-df_tn$city[which(df_tn$city == "Brownsville,")] <- "Brownsville"
-df_tn$city[which(df_tn$city == "Paris,")] <- "Paris"
-df_tn$city[which(df_tn$city == "Cookeville,")] <- "Cookeville" 
-df_tn$city[which(df_tn$city == "Lawrenceburg,")] <- "Lawrenceburg"
-df_tn$city[which(df_tn$city == "Athens,")] <- "Athens"
-df_tn$city[which(df_tn$city == "Lewisburg,")] <- "Lewisburg"
-df_tn$city[which(df_tn$city == "Dayton,")] <- "Dayton"
-df_tn$city[which(df_tn$city == "Sevierville,")] <- "Sevierville"
-df_tn$city[which(df_tn$city == "McMinnville,")] <- "McMinnville"
-df_tn$city[which(df_tn$city == "Martin,")] <- "Martin"
+df <- df %>% 
+  separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
 ```
 
 According to the data dictionary, the unit of the 4 columns("ED_PRXECE", "ED_PRXHQECE", "HE_SUPRFND", "HE_RSEI") in the data is natural log. Natural log units change values less than e(2.71828) into negative numbers and this makes analysis difficult. Therefore, we are going to change the value of these 4 columns into original unit by using exp function.
 
 ```{r}
-df_tn <- df_tn %>% 
-  mutate(ED_PRXECE_NM = exp(ED_PRXECE)) %>%
-  mutate(ED_PRXHQECE_NM = exp(ED_PRXHQECE)) %>%
-  mutate(HE_SUPRFND_NM = exp(HE_SUPRFND)) %>%
-  mutate(HE_RSEI_NM = exp(HE_RSEI)) %>%
+df<- df %>% 
+  mutate(num_edu_center = exp(ED_PRXECE)) %>%
+  mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%
+  mutate(num_waste_dump_site = exp(HE_SUPRFND)) %>%
+  mutate(population = exp(HE_RSEI)) %>%
   select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)
 ```
 
 Most of the columns are hard to understand. We tried to make it easier and obvious even without the data dictionary.
 
 ```{r}
-df_tn <- df_tn %>% 
+df <- df %>% 
   rename(id = `_id`) %>% 
   rename(geo_id = geoid) %>% 
   rename(metro_areas = in100) %>%
@@ -94,8 +66,6 @@ df_tn <- df_tn %>%
   rename(score_third_grade_read = ED_READING) %>%
   rename(perc_elementary_school_poverty = ED_SCHPOV) %>% 
   rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
-  rename(num_ECE_nearby = ED_PRXECE_NM) %>% 
-  rename(num_high_qual_ECE_nearby = ED_PRXHQECE_NM) %>% 
   rename(perc_supermarket_nearby = HE_FOOD) %>% 
   rename(perc_green_space_access = HE_GREEN) %>%
   rename(days_temp_above90 = HE_HEAT) %>%
@@ -104,8 +74,6 @@ df_tn <- df_tn %>%
   rename(mean_microparticle = HE_PM25) %>%
   rename(perc_housing_vacancy = HE_VACANCY) %>%
   rename(index_walkability = HE_WALK) %>% 
-  rename(num_waste_dump_sites = HE_SUPRFND_NM) %>%
-  rename(index_air_pollutants = HE_RSEI_NM) %>%
   rename(perc_below100_poverty = SE_POVRATE) %>%
   rename(perc_household_public_assistance = SE_PUBLIC) %>%
   rename(perc_home_ownership = SE_HOME) %>%
@@ -119,13 +87,13 @@ df_tn <- df_tn %>%
 Deleted unnecessary columns (They have the same values.)
 
 ```{r}
-df_tn <- df_tn %>% select(-state, -no_mean, -statefips, -stateusps, -num_waste_dump_sites)
+df <- df %>% select(-state, -no_mean, -statefips, -stateusps, -num_waste_dump_site)
 ```
 
 This is the final data after cleaning columns and values.
 
 ```{r}
-head(df_tn)
+head(df)
 ```
 
 ## Dealing with NA values.
@@ -133,7 +101,7 @@ head(df_tn)
 Creates a new dataframe that gives us a count of the na's in each variable column.
 
 ```{r message=FALSE, warning=FALSE}
-extra_NA<- df_tn %>% 
+extra_NA<- df %>% 
   select_if(function(x) any(is.na(x))) %>% 
   summarise_each(funs(sum(is.na(.))))
 
@@ -143,7 +111,7 @@ extra_NA
 In order to decide how to deal with NA values, we made a subset which has the rows containing NA values to see their properties.
 
 ```{r}
-NA_subset <- df_tn[rowSums(is.na(df_tn)) > 0, ]
+NA_subset <- df[rowSums(is.na(df)) > 0, ]
 NA_subset
 ```
 
@@ -151,9 +119,9 @@ Some rows have more NAs than meaningful values. For these rows, due to the poten
 
 ```{r}
 # Delete some rows having more NAs than meaningful values.
-df_tn <- df_tn %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
+df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
 ```
 
-For the rest of NA, we are not going to replace them with either mean, mode, or median. As each town has their own characteristics, we thought mean, mode, and median cannot substitute for the NAs. Therefore, whenever we use a column having NAs, we are going to ignore the NAs and use only the rest of meaningful values.
 
 Now, our data is ready to be analyzed!
+We will have to decide how to to handle NA's
