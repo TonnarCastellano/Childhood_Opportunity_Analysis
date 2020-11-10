@@ -1,0 +1,184 @@
+---
+title: "Graph1"
+output: html_document
+---
+ 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+data <- read_csv("Data Basics/data.csv")
+View(data)
+```
+
+
+```{r}
+data %>%
+  group_by(stateusps)%>%
+  summarise(count=n())
+```
+# Part 1: Above or Below Nation Average?
+This series of visuals analyzes how states measure up to national averages on various home-life variables, and how that can have effects on education levels. 
+
+National averages: 
+```{r}
+#Single-headed 
+A <-data %>% 
+  drop_na(SE_SINGLE)
+A %>%
+  summarise(avg_single= mean(SE_SINGLE))
+
+
+#Median HouseHold income
+B<- data%>%
+  drop_na(SE_MHE)
+B %>%
+  summarise(avg_income=mean(SE_MHE))
+```
+
+Graphs:
+```{r}
+#Most populated: c("CA", "TX","FL", "NY", "PA", "IL", "OH","GA","NC","MI", "DC")
+#least: c("WY", "VT", "AL","ND", "SD","DE","RI","MT", "MA")
+
+# A) Single Household 
+diff_single<-  A %>%  #Adding a new column that contains the states's deviation in single from the national average
+  group_by(stateusps)%>%
+  summarise(SE_SING= mean(SE_SINGLE))%>%
+  mutate(average1 = SE_SING - mean(SE_SING))%>%
+  select(stateusps, SE_SING, average1)%>%
+  filter(row_number() %% 2 == 0)
+
+
+#Graph
+ggplot(diff_single, aes(x = reorder(stateusps, average1 ), y = average1,
+           fill = average1 >0))+
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
+  labs(
+    title="Single-headed Households ",
+    subtitle="25 out of 50 states, we can see how each one is above or below the national average, 35.9%",
+    x = "State",
+    y = "Percent Difference"
+  )+
+  theme_bw()
+
+# B) Median Income
+diff_income<-  B %>%  #Adding a new column that contains the states's deviation in single from the national average
+  group_by(stateusps)%>%
+  summarise(SE_MHE= mean(SE_MHE))%>%
+  mutate(average = SE_MHE - mean(SE_MHE))%>%
+  select(stateusps, SE_MHE, average)%>%
+  filter(stateusps == 'CA', 'TX', 'FL', 'NY', 'PA', 'IL', 'OH', 'GA', 'NC', 'MI', 'DC')
+#Why is this filter above not working??
+
+#Graph
+ggplot(diff_income, aes(x = reorder(stateusps, average), y = average,
+           fill = average >0))+
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
+  labs(
+    title="Household income ",
+    subtitle="25 out of 50 states, we can see how each one is above or below the national average, $61,08",
+    x = "State",
+    y = "Percent Difference"
+  )+
+  theme_bw()
+
+```
+
+ggplot(hc_avg_pay) +
+  geom_col(aes(x = reorder(conf, avg_total_pay) , y = avg_total_pay, fill = conf_type)) +
+
+# Part 2: How one variable affects the other. 
+Bar plot per state, on average AP course., 
+color adds layer of Percentage adults ages 25 and over with a college degree or higher.
+```{r}
+data1<-data %>% 
+  drop_na(ED_APENR, ED_ATTAIN)
+
+data2 <- data1%>%
+  group_by(stateusps)%>%
+  summarise(avg_AP=mean(ED_APENR), ap_a=mean(ED_ATTAIN))%>%
+  arrange(desc(avg_AP))%>%
+  filter(row_number() %% 2 == 0) #to get every other, is there a simpler way?
+data2 
+
+ggplot(data2, aes(x=reorder(stateusps, avg_AP), y=avg_AP))+
+  geom_col(aes(col= ap_a, fill=ap_a, name='o'))+
+  labs(title="Percent of Students in AP Courses",
+           y="Percent", 
+           x="State")+
+  theme_bw()
+
+#how do you rename Legend?
+```
+
+
+# Histogram of HS grad rate overall
+```{r}
+head(data)
+q<- ggplot(data, aes(x=ED_HSGRAD))+
+  geom_histogram(aes(y = ..density..), colour = "black", fill = "white", binwidth = 2)+
+  labs(
+    title="High School Graduation Rate",
+    x="Graduation Rate",
+    y="Frequency"
+  )+
+  geom_density(alpha = .2, fill="#FF6675")+
+  xlim(0, 100) + 
+  theme_bw()
+
+#Confused about frequency on y axis
+```
+
+
+# Histogram of HS grad rate with and w/o poverty rate. 
+Here we plot the same graph as above, but without entries from og dataset that have a poverty rate >25%
+You could also substitute poverty rate w SE_MHE (Median income of all households.) 
+```{r}
+head(data)
+
+data_pov <- data%>%
+  select(ED_HSGRAD, SE_POVRATE)%>%
+  arrange((SE_POVRATE))%>%
+  filter(SE_POVRATE<0.10)
+
+data_pov
+w<- ggplot(data_pov, aes(x=ED_HSGRAD))+
+  geom_histogram(aes(y = ..density..), colour = "black", fill = "white", binwidth = 2)+
+  labs(
+    title="High School Graduation Rate",
+    subtitle = "Graduation rates where percent of kids living in poverty less than 10%",
+    x="Graduation Rate",
+    y="Frequency"
+  )+
+  geom_density(alpha = .2, fill="#FF6675")+
+  xlim(0, 100) + 
+  theme_bw()
+```
+
+
+```{r}
+data%>%
+  group_by(msaname15)%>%
+  filter(year=='2015')%>%
+  summarise(city_pop= sum(pop))%>%
+  arrange((city_pop))%>%
+  na.omit(msaname15)
+
+#Big city -> top 8 (kids)
+#small city ->bottom 50 
+```
+
+
+
+
+
+
+
+
+
+
