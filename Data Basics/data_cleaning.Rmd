@@ -68,3 +68,5 @@ extra_NA<- df_nash %>%
   summarise_each(funs(sum(is.na(.))))
 ```
 
+
+

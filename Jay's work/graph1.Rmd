@@ -13,6 +13,12 @@ data <- read_csv("Data Basics/data.csv")
 #View(data)
 ```
 
+
+```{r}
+data %>%
+  group_by(stateusps)%>%
+  summarise(count=n())
+```
 # Part 1: Above or Below Nation Average?
 This series of visuals analyzes how states measure up to national averages on various home-life variables, and how that can have effects on education levels. 
 
@@ -44,6 +50,7 @@ diff_single<-  A %>%  #Adding a new column that contains the states's deviation 
   mutate(average1 = SE_SING - mean(SE_SING))%>%
   select(stateusps, SE_SING, average1)%>%
   filter(row_number() %% 2 == 0)
+
 
 #Graph
 ggplot(diff_single, aes(x = reorder(stateusps, average1 ), y = average1,
@@ -104,7 +111,8 @@ data1<-data %>%
 data2 <- data1%>%
   group_by(stateusps)%>%
   summarise(avg_AP=mean(ED_APENR), ap_a=mean(ED_ATTAIN))%>%
-  arrange(desc(avg_AP))
+  arrange(desc(avg_AP))%>%
+  filter(stateusps== c("CA", "TX", "FL", "NY", "PA", "IL", "OH", "GA", "NC", "MI", "DC")) #to get every other, is there a simpler way?
 data2 
 
 ggplot(data2, aes(x=reorder(stateusps, avg_AP), y=avg_AP))+
@@ -215,5 +223,63 @@ ggplot(data2, aes(x=reorder(stateusps, avg_AP), y=avg_AP))+
 
 #Want to rename states
 ```
+
+# Los Angeles + counties
+
+Big County: Los Angeles-Long Beach-Anaheim, CA Metro Area	
+Surrounding: 
+
+
+Percentage 18-24 year-olds enrolled in college within 25-mile radius.
+
+Histograms ?
+```{r}
+
+head(data)
+
+only_LA <- data %>%
+  group_by(msaname15)%>%
+  summarise(count=n())
+
+only_LA
+```
+
+
+
+
+## Before meeting 11/15
+
+We decided to focus on top 4/5 cities and compare the findings w the corresponding suburbs
+Below, we will compare Los Angeles: 
+
+
+One way we could do:
+
+Each member focuses on a few things/variables/relationships between each variables across all 4 states. So that there can be consistency. Can compare to suburbs as well. 
+
+If we do 1 state each, the analysis won't have consistency.
+
+
+And 1 person focus on national averages? (or not necessary? )
+
+
+1. Does college degree matter?
+2. Does poverty impact on young children's basic ability? what about high school students?
+3. Does preschool and ECE really matters for young children's basic ability?
+4. If a teacher does not have a lot of experience, would it give bad impact on student's  score/ability?
+5. Is there a big difference between students' score depending on which race prevails in number?
+6. students living in a big city has better score than students living in suburb?
+
+
+
+
+
+
+
+
+
+
+
+
 
 
