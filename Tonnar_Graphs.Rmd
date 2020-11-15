@@ -1,0 +1,84 @@
+---
+title: "Tonnar Graphs"
+---
+
+
+```{r}
+df_ny <- df %>% filter(
+  county_code == '36061' |
+    county_code ==  '36027' |
+    county_code ==  '36071' |
+    county_code ==  '34021' |
+    county_code ==  '36111' |
+    county_code == '09001' |
+    county_code ==  '09009'
+) %>%
+  select(
+    population,
+    county_code,
+    year,
+    city,
+    AP_students,
+    num_college_enrolled,
+    preschoolers,
+    hs_grads,
+    `3rd_g_math`,
+    `3rd_g_read`,
+    elementary_school_poverty,
+    `1st/2nd_y_teachers`,
+    median_income,
+    employment_rate
+  ) %>%
+  na.omit()
+
+
+
+df_ny <- df_ny %>%
+  mutate(county_code = replace(county_code, county_code == '09001', 'New Haven')) %>%
+  mutate(county_code =  replace(county_code, county_code == '09009', 'Fairfield')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36027', 'Dutchess')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36071', 'Orange')) %>%
+  mutate(county_code =  replace(county_code, county_code == '34021', 'Mercer')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36111', 'Ulster'))
+
+
+df_nyc_2010 <-
+  df_ny %>% filter(year == 2010 & county_code == '36061')
+df_outside_county_2010 <-
+  df_ny %>% filter(year == 2010 & county_code != '36061')
+
+
+df_nyc_2015 <-
+  df_ny %>% filter(year == 2015 & county_code == '36061')
+df_outside_county_2015 <-
+  df_ny %>% filter(year == 2015 & county_code != '36061')
+```
+
+
+```{r}
+df_nyc_2010 %>% ggplot(aes(x =  `3rd_g_read`, y =  `3rd_g_math`))+
+  geom_point()+
+  labs(
+    title = 'NYC'
+  )
+
+df_outside_county_2010 %>% ggplot(aes(x =  `3rd_g_read`, y =  `3rd_g_math`))+
+  geom_point(aes(color = county_code))+
+  labs(
+    title = 'Surronding Areas'
+  )
+```
+
+```{r}
+df_outside_county_2010 %>% group_by(county_code) %>% 
+  ggplot(aes(x = county_code , y = `3rd_g_math`))+
+  geom_violin()
+```
+
+
+
+
+
+
+
+
