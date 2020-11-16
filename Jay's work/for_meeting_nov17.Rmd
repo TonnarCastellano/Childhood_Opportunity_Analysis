@@ -1,9 +1,8 @@
 ---
 title: "Meeting 17th"
 author: Jay Kim
-output: 
-  html_document:
-    code_folding: hide
+output: github_document
+pdf_document: default
 ---
 # Notes:
 
