@@ -1,0 +1,266 @@
+---
+title: "EDA_team5_final"
+author: "Jay Kim, Soyeon Park, Tonnar Castellano, Ty Painter"
+output: github_document
+---
+
+# Necessary Libraries
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+```
+
+## Basic importating
+```{r message=FALSE, warning=FALSE}
+# Import data
+df <- read_csv('../../Data Basics/data.csv')
+```
+
+## Basic Exporlation
+```{r}
+is.data.frame(df)
+dim(df)
+head(df)
+summary(df)
+```
+
+This data is about child opportunity index in United States. It has 146112 rows and 39 columns. The unit of analysis is town and each row shows a town's properties related to child education in 2010 and 2015. The shape of data is long and the class of data is dataframe.
+
+# Data Cleaning
+
+## Column names
+
+Since there are so many observations in the data, we are going to focus on a specific state, Tennessee.
+
+```{r message=FALSE, warning=FALSE}
+# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
+df <- df %>% 
+  separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
+```
+
+According to the data dictionary, the unit of the 4 columns("ED_PRXECE", "ED_PRXHQECE", "HE_SUPRFND", "HE_RSEI") in the data is natural log. Natural log units change values less than e(2.71828) into negative numbers and this makes analysis difficult. Therefore, we are going to change the value of these 4 columns into original unit by using exp function.
+
+```{r}
+df <- df %>% 
+  mutate(ED_PRXECE_NM = exp(ED_PRXECE)) %>%
+  mutate(ED_PRXHQECE_NM = exp(ED_PRXHQECE)) %>%
+  mutate(HE_SUPRFND_NM = exp(HE_SUPRFND)) %>%
+  mutate(HE_RSEI_NM = exp(HE_RSEI)) %>%
+  select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)
+```
+
+Most of the columns are hard to understand. We tried to make it easier and obvious even without the data dictionary.
+
+```{r}
+df <- df %>% 
+  rename(id = `_id`) %>% 
+  rename(geo_id = geoid) %>% 
+  rename(metro_areas = in100) %>%
+  rename(area_code = msaid15) %>% 
+  rename(county_code = countyfips) %>%
+  rename(num_under_18 = pop) %>% 
+  rename(ratio_students_AP_enrolled = ED_APENR) %>%
+  rename(perc_over24_college_degree = ED_ATTAIN) %>%
+  rename(perc_18to24_nearby_college_enrolled = ED_COLLEGE) %>%
+  rename(perc_3to4_school_enrolled = ED_ECENROL) %>%
+  rename(perc_high_grad = ED_HSGRAD) %>%
+  rename(score_third_grade_math = ED_MATH) %>%
+  rename(score_third_grade_read = ED_READING) %>%
+  rename(perc_elementary_school_poverty = ED_SCHPOV) %>% 
+  rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
+  rename(num_ECE_nearby = ED_PRXECE_NM) %>% 
+  rename(num_high_qual_ECE_nearby = ED_PRXHQECE_NM) %>% 
+  rename(perc_supermarket_nearby = HE_FOOD) %>% 
+  rename(perc_green_space_access = HE_GREEN) %>%
+  rename(days_temp_above90 = HE_HEAT) %>%
+  rename(perc_0to64_health_insurance = HE_HLTHINS) %>%
+  rename(mean_ozone_amount = HE_OZONE) %>%
+  rename(mean_microparticle = HE_PM25) %>%
+  rename(perc_housing_vacancy = HE_VACANCY) %>%
+  rename(index_walkability = HE_WALK) %>% 
+  rename(num_waste_dump_sites = HE_SUPRFND_NM) %>%
+  rename(index_air_pollutants = HE_RSEI_NM) %>%
+  rename(perc_below100_poverty = SE_POVRATE) %>%
+  rename(perc_household_public_assistance = SE_PUBLIC) %>%
+  rename(perc_home_ownership = SE_HOME) %>%
+  rename(perc_over15_high_skill = SE_OCC) %>%
+  rename(median_income=SE_MHE) %>%
+  rename(perc_adults_employed = SE_EMPRAT) %>%
+  rename(perc_worker_commute_over1hour = SE_JOBPROX) %>%
+  rename(perc_single_parent = SE_SINGLE)
+```
+
+```{r}
+df_2010 <- df %>% filter(year == "2010")
+df_2015 <- df %>% filter(year == "2015")
+```
+
+
+Deleted unnecessary columns (They have the same values.)
+
+```{r}
+df_tx <- df %>% filter((county_code == "48201") | (county_code == "48157")| (county_code == "48339")|(county_code == "48167")|(county_code == "48039")|(county_code == "48291")|(county_code == "48473")|(county_code == "48071"))
+```
+
+```{r}
+df_tx <- df_tx %>% mutate(group = ifelse(county_code == "48201", "city", "suburb")) %>%
+  select(group, everything())
+```
+
+```{r}
+df_tx <- df_tx %>% mutate(county_name = case_when(county_code == "48201" ~ "Harris", county_code == "48157" ~ "Fort Bend", county_code == "48339" ~ "Montgomery", county_code == "48167" ~ "Galveston", county_code == "48039" ~ "Brazoria", county_code == "48291" ~ "Liberty", county_code == "48473" ~ "Waller", county_code == "48071" ~ "Chambers"))
+```
+
+
+```{r}
+df_tx$county_name = factor(df_tx$county_name, levels = c("Harris", "Fort Bend", "Galveston", "Montgomery", "Brazoria", "Chambers", "Waller", "Liberty"))
+```
+
+
+This is the final data after cleaning columns and values.
+
+```{r}
+df_tx_2010 <- df_tx %>% filter(year == "2010")
+df_tx_2015 <- df_tx %>% filter(year == "2015")
+```
+
+# Q1. Is there any difference in young children(13-14 years-old)'s math and reading ability by county? - Primary school
+```{r}
+ggplot(df_tx_2010, aes(x = score_third_grade_math, y = score_third_grade_read)) + 
+  geom_point(size = .5) +
+  facet_wrap(~county_name, nrow = 2) +
+  geom_hline(data = df_2010, aes(yintercept = mean(score_third_grade_read, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(score_third_grade_math, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 3rd Grades Read and Math grades by County", subtitle = "The red lines show U.S nation's average", x = "3rd Grades' Math Score", y = "3rd Grades' Read Score")
+```
+
+# Q1-1. Is there any difference in young children(13-14 years-old)'s math and reading ability depending on city and suburb? - Primary School
+```{r}
+ggplot(df_tx_2010, aes(x = score_third_grade_math, y = score_third_grade_read)) + 
+  geom_point() +
+  facet_wrap(~group, nrow = 1) +
+  geom_hline(data = df_2010, aes(yintercept = mean(score_third_grade_read, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(score_third_grade_math, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 3rd Grades Read and Math grades by County", subtitle = "The red lines show U.S nation's average", x = "3rd Grades' Math Score", y = "3rd Grades' Read Score")
+```
+
+# Q2. Is there any difference in teenager(17-18 years-old)'s study ability by country? - High School
+```{r, message=FALSE, warning=FALSE}
+ggplot(df_tx_2010, aes(x = county_name, y = ratio_students_AP_enrolled)) + 
+  geom_violin(fill = "gray", alpha = 0.2) + 
+  stat_summary(fun.data=mean_sdl, mult=1, geom="pointrange", color="blue", lwd = 0.4) + 
+  theme_bw() + 
+  scale_x_discrete(limits = c("Harris", "Fort Bend", "Galveston", "Montgomery", "Brazoria", "Chambers", "Waller", "Liberty")) + 
+  geom_hline(yintercept = mean(df_2010$ratio_students_AP_enrolled, na.rm = TRUE), col = "red", lwd = 0.8, linetype = "dotted") + 
+  labs(title = "2010 The ratio of 11th and 12nd students who enrolled in AP class", subtitle = "The red line shows the U.S average", x = "County Name", y = "The ratio of high school studnets with AP class")
+```
+
+# Q2-2. Is there any difference in teenager(17-18 years-old)'s study ability depending on city and suburb? - High School
+```{r, message=FALSE, warning=FALSE}
+ggplot(df_tx_2010, aes(x = group, y = ratio_students_AP_enrolled)) + 
+  geom_violin(fill = "gray", alpha = 0.2) + 
+  stat_summary(fun.data=mean_sdl, mult=1, geom="pointrange", color="blue", lwd = 0.4) + 
+  theme_bw() + 
+  geom_hline(yintercept = mean(df_2010$ratio_students_AP_enrolled, na.rm = TRUE), col = "red", lwd = 0.8, linetype = "dotted") + 
+  labs(title = "2010 The ratio of 11th and 12nd students who enrolled in AP class", subtitle = "The red line shows the U.S average", x = "City vs Suburb", y = "The ratio of high school studnets with AP class")
+```
+
+# Q3. Is there any relationship between household income and young children's study ability?
+```{r}
+options(scipen = 999)
+
+ggplot(df_tx_2010, aes(x = median_income, y = score_third_grade_read)) + 
+  geom_point() +
+  facet_wrap(~group) +
+  geom_hline(data = df_2010, aes(yintercept = mean(score_third_grade_read, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(median_income, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 3rd Grades Read score and Median Income", subtitle = "The red lines show U.S nation's average", x = "Median Income", y = "3rd Grades' Read Score")
+```
+
+# Q4. Is there any relationship between single parent and young children's study ability?
+```{r}
+options(scipen = 999)
+
+ggplot(df_tx_2010, aes(x = perc_single_parent, y = score_third_grade_read)) + 
+  geom_point() +
+  facet_wrap(~group) +
+  geom_hline(data = df_2010, aes(yintercept = mean(score_third_grade_read, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(perc_single_parent, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 3rd Grades Read score and the Percentage of Sigle Parent", subtitle = "The red lines show U.S nation's average", x = "The Percentage of Single parent", y = "3rd Grades' Read Score")
+```
+
+# Q4. Is there any relationship between single parent and young children's study ability?
+```{r}
+options(scipen = 999)
+
+ggplot(df_tx_2010, aes(x = perc_single_parent, y = ratio_students_AP_enrolled)) + 
+  geom_point() +
+  facet_wrap(~group) +
+  geom_hline(data = df_2010, aes(yintercept = mean(ratio_students_AP_enrolled, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(perc_single_parent, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 The ratio of 11th and 12nd students who enrolled in AP class and the Percentage of Sigle Parent", subtitle = "The red lines show U.S nation's average", x = "The Percentage of Single parent", y = "The ratio of high school students with AP class")
+```
+
+# Q5. Is there any relationship between single parent and teenager's highshool graduation?
+```{r}
+options(scipen = 999)
+
+ggplot(df_tx_2010, aes(x = perc_single_parent, y = perc_high_grad)) + 
+  geom_point() +
+  facet_wrap(~group) +
+  geom_hline(data = df_2010, aes(yintercept = mean(perc_high_grad, na.rm = TRUE)), col = "red", lwd = .3) + 
+  geom_vline(data = df_2010, aes(xintercept = mean(perc_single_parent, na.rm = TRUE)), col = "red", lwd = .3) +
+  theme_bw() + 
+  labs(title = "2010 The ratio of students who graduated high school and the Percentage of Sigle Parent", subtitle = "The red lines show U.S nation's average", x = "The Percentage of Single parent", y = "The ratio of students who graduated high school")
+```
+
+# How is residential environment by county?
+```{r}
+df_tx_2010_resi <- df_tx_2010 %>% filter(!is.na(perc_supermarket_nearby)) %>%
+  filter(!is.na(perc_green_space_access)) %>%
+  filter(!is.na(index_walkability)) %>%
+  mutate(residential_environment = perc_supermarket_nearby + perc_green_space_access + index_walkability) %>%
+  group_by(county_name) %>%
+  summarise(resi_mean = mean(residential_environment))
+```
+
+```{r}
+ggplot(df_tx_2010_resi, aes(x = reorder(county_name, resi_mean, desc), y = resi_mean)) +
+  geom_bar(stat = "identity", fill = "#EBC36A") +
+  theme_bw() + 
+  labs(title = "Index of good residential environment by conuty", subtitle = "residential environment = Near Supermarket + Green Space Access + Walkability", y = "Index of good residential environment", x = "County" )
+```
+
+```{r}
+str(df)
+```
+
+
+1. New York, NY
+2. Los Angeles, CA
+3. Chicago, IL
+4. Houston, TX
+5. Philadelphia, PA
+6. Phoenix, AZ
+7. San Antonio, TX
+8. San Diego, CA
+9. Dallas, TX
+10. San Jose, CA
+11. Honolulu, HW
+12. Austin, TX
+13. Indianapolis, ID
+14. Jacksonville, FL
+15. San Francisco, CA
+16. Columbus, Ohio
+17. Cahrlotte, NC
+18. Fort Worth, TX
+19. Detroit, MI
+20. El Paso, TX
