@@ -103,7 +103,7 @@ california <- A%>%
   drop_na(msaname15)%>% #cal dataframe has 1 NA in msaname15, so drop it.
 #now need to create new column that has deviation from avg. ($60,824) 
   mutate(deviation= mean_inc - 60824)%>%
-  mutate(region = sapply(strsplit(msaname15, ","),"[", 1))
+  mutate(region = sapply(strsplit(msaname15, ","),"[", 1)) #to truncate second half of name
 ```
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
@@ -157,20 +157,20 @@ CA <- data1%>%
   summarise(avg_AP= mean(ED_APENR), avg_single = mean(SE_SINGLE))%>% 
   #column called "avg_AP" that is avg % of students in AP
   #column called "avg_single" that is average % of single headed households
+  mutate(region = sapply(strsplit(msaname15, ","),"[", 1))%>%
   arrange(desc(avg_AP))
 ```
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
-#CA 
-
-ggplot(CA, aes(x=reorder(msaname15, avg_AP), y=avg_AP))+
+ggplot(CA, aes(x=reorder(region, avg_AP), y=avg_AP))+
   geom_col(aes(col= avg_single, fill=avg_single))+
   labs(title="Percent of Students in AP Courses",
            y="Percent", 
            x="City")+
-  theme_bw()
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
