@@ -2,6 +2,20 @@
 title: "NYC Livability"
 ---
 
+## Introduction
+
+For the other cities we choose to the surrounding areas as it can be
+hard to break up the city itself into very distinct areas. However, New
+York city is a bit odd in this respect because it so easily is broken up
+into the five borrows. These five boroughs have unique characteristics
+that are represented similarly as suburban and other surrounding areas
+would be for other major metropolitan areas. As such, we decided to opt
+for looking at the education and economic opportunities exclusively
+within New York City. We believe that this better represents our
+motivating question because it would allow us to slice the data across
+distinct axis while still retaining the heart of where is the most
+opportunity.
+
 ## Life in The City
 Life quality is in a city is an exceptionally hard thing to measure and will tend to vary from person to person. While quality of life might seem like an extraneous variable it is intimately linked to success even if it is not always in an obvious manner. Unfortunately, our study is focused more on the educational and economic indicators of success in a city. However, the data as mentioned is still exceptionally important so while not the main focus on the analysis it is still worth including if for no other reason than to paint a picture of the overall understanding of the boroughs in the city. 
 
@@ -31,6 +45,7 @@ df_nyc_life %>% ggplot(aes(y = walkability, x = commute_over1hour))+
                          geom_point()+ 
   facet_grid(.~ county_code)
 ```
+
 The first part of the analysis will link the walkability. As a general rule of thumb big cities tend to be more "walkable". As such, it seems there should be a direct negative relationship between the commute_over1hour and the walkability of the city. It seems however that most of the boroughs in the city tend to be equally walkable and have similar percentages of commutes over an hour. 
 
 ### Green Spaces and Pollution 
@@ -39,6 +54,7 @@ df_nyc_life %>% ggplot(aes(y = green_spaces, x = mean_microparticle))+
                          geom_point()+ 
   facet_grid(.~ county_code)
 ```
+
 It does seem that there also a lack of relationship between the number of green spaces and the mean micro-particles i.e. pollution. The amount of pollution does seem to be fairly high in all of them expect Staten Island which consequently appears to exhibit the least amount of green spaces. However, it is worth mentioning that might be skewed for Manhattan due to Central Park. 
 
 
@@ -48,6 +64,7 @@ df_nyc_life %>% filter(housing_vacancy <= 50) %>% ggplot(aes(y = housing_vacancy
                          geom_point()+ 
   facet_grid(.~ county_code)
 ```
+
 The last factor worth examining in city life is the number of impoverished people and the amount of housing vacancy. Here we do see a bit more of a relationship with less poverty as a general role of them leading to less vacancy. This should not be a surprising trend. We do seem to see not as stark of a relationship as might be viewed in cities with more space for houses than New York. 
 
 
