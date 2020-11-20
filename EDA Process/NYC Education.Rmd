@@ -1,0 +1,155 @@
+---
+title: "NYC Education"
+---
+## Childhood Education Status
+
+### Math and Reading in Elementary School Students
+```{r}
+df_nyc <- df %>% filter(
+    county_code == '36061' |
+    county_code ==  '36047' |
+    county_code ==  '36081' |
+    county_code ==  '36005' |
+    county_code ==  '36085' 
+) %>%
+  select(
+    population,
+    county_code,
+    year,
+    city,
+    AP_students,
+    num_college_enrolled,
+    preschoolers,
+    hs_grads,
+    third_g_math,
+    third_g_read,
+    elementary_school_poverty,
+    firstsecond_y_teachers,
+    median_income,
+    employment_rate
+  )
+
+
+
+df_nyc <- df_nyc %>%
+  mutate(county_code = replace(county_code, county_code == '36061', 'Manhattan')) %>% 
+  mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36081', 'Queens')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36005', 'Bronx')) %>%
+  mutate(county_code =  replace(county_code, county_code == '36085', 'Staten Island'))%>%
+  mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)) 
+
+
+df_nyc_2010 <-
+  df_nyc %>% filter(year == 2010)
+
+df_nyc_2015 <-
+  df_nyc %>% filter(year == 2015)
+```
+
+
+```{r warning=FALSE}
+df_nyc_2010 %>% group_by(county_code) %>% 
+  ggplot(aes(x =  third_g_read, y =  third_g_math))+
+  geom_point(aes(color = county_code),alpha = .5)+
+  scale_y_continuous(limits = c(0,450))+
+  scale_x_continuous(limits = c(0,450))+
+  labs(
+    title = 'Elementary School Education in New York City 2010',
+    subtitle = 'Data from DataDiversityKids.org',
+    y = 'Kids above a 3rd Grade Math Level',
+    x = 'Kids above a 3rd Grade Reading Level',
+    color = 'NYC Borough'
+  )+
+  
+  theme_classic()
+
+  
+df_nyc_2015 %>% group_by(county_code) %>% 
+  ggplot(aes(x =  third_g_read, y =  third_g_math, color = county_code))+
+  geom_point( alpha = .5)+
+  scale_y_continuous(limits = c(0,450))+
+  scale_x_continuous(limits = c(0,450))+
+  labs(
+    title = 'Elementary School Education in New York City 2015',
+    subtitle = 'Data from DataDiversityKids.org',
+    y = 'Kids Above a 3rd Grade Math Level by School',
+    x = 'Kids Above a 3rd Grade Reading Level by School',
+    color = 'NYC Borough'
+  )+
+  theme_classic()
+```
+The first and most obvious indicator of education success is how well elementary students are doing in a given area. This obviously hinges on numerous factors such as teachers and income just for starters. However, first we will want to look at the trends and correlation between the two factors and across the two years given in our data set. 
+
+As expected, reading and math scores at the third grade level track in nearly lockstep across all boroughs. This makes sense because most of the students have not specialized like they will in college and the material at this level more tests cognitive ability than skills within that field(find citation). However, what is interesting is the dispersion of the data of exhibits a higher variance over time. Due to the amount of points it can be hard to see who did better, worse, or stayed the same.
+
+```{r}
+df_nyc %>% group_by(year,county_code) %>% summarise(values = mean(third_g_math)) %>%
+  mutate(year = as.character(year)) %>%
+  ggplot(aes(x = year, y = values))+
+  geom_point(aes(color = county_code), size = 5)+
+  geom_line(aes(color = county_code, group = county_code), linetype = "dashed")+
+  scale_x_discrete(expand = c(.2,.2))+
+  scale_y_continuous(limits = c(0,300))+
+  labs(
+    title = 'Elementary School Education in New York City 2010',
+    subtitle = 'Data from DataDiversityKids.org',
+    y = 'Kids Above a 3rd Grade Math Level ',
+    x = 'Year',
+    color = 'NYC Borough'
+  )+
+  theme_classic()
+
+df_nyc %>% group_by(year,county_code) %>% summarise(values = mean(third_g_read)) %>%
+  mutate(year = as.character(year)) %>%
+  ggplot(aes(x = year, y = values))+
+  geom_point(aes(color = county_code), size = 5)+
+  geom_line(aes(color = county_code, group = county_code), linetype = "dashed")+
+  scale_x_discrete(expand = c(.2,.2))+
+  scale_y_continuous(limits = c(0,300))+
+  labs(
+    title = 'Elementary School Education in New York City 2010',
+    subtitle = 'Data from DataDiversityKids.org',
+    y = 'Kids Above a 3rd Grade Reading Level',
+    x = 'Year',
+    color = 'NYC Borough'
+  )+
+  theme_classic()
+```
+Given our code above the next logical step is to break out the boroughs into more easily identifiable parts while stilling maintaining a comparison between them. The comparison is broken up by reading and math scores independently because those made up  the axis from the above graph. Two major facets quickly become apparent in the data. The first is that math scores trended down over time. The other major structure within the data is how the five boroughs faired. Manhattan was clearly the best and the Bronx was clearly the worst from this analysis. 
+
+
+Moving forward we will compare Manhattan and the Bronx because of the stark differences it should be easier to find potentially patterns that *could* cause or represent these differences.
+```{r}
+df_poverty_manhattan  <- df_nyc %>% filter(county_code == 'Manhattan')%>% select(elementary_school_poverty)
+df_poverty_bronx <- df_nyc %>% filter(county_code == 'Bronx') %>% select(elementary_school_poverty)
+
+ggplot()+
+  geom_histogram(data = df_poverty_manhattan, aes(x = elementary_school_poverty, y = ..density..), fill = 'purple', color = 'black', alpha = .3,bins = 20)+
+   geom_histogram(data = df_poverty_bronx, aes(x = elementary_school_poverty,  y = ..density..), fill = 'yellow', color = 'black', alpha = .5, bins = 20)+
+  scale_color_manual(values = fill)+
+  theme_linedraw()+
+    labs(
+    title = 'Elementary School Education in New York City 2010',
+    subtitle = 'Data from DataDiversityKids.org',
+    x = 'Elementary School Poverty'
+  )
+```
+The first and most obvious one to check is the levels of poverty exhibited by the school. If Manhattan and the Bronx exhibit different levels of poverty especially significant ones it could be a leading cause in what causes the differences in math and reading ability. The graph above which plots the frequency of which schools are afflicted with poverty paints a clear picture that Manhattan has both less severe poverty and less frequent poverty. However, it is possible that this maybe has no affect on ability. 
+```{r}
+df_nyc %>% filter(county_code == 'Manhattan' | county_code == 'Bronx') %>% select(elementary_school_poverty,county_code,third_g_math,third_g_read) %>% 
+  ggplot(aes(x = county_code, y = third_g_read))+
+  geom_violin()+
+  geom_jitter(aes(color = elementary_school_poverty), width = .3, alpha = .5)+
+  scale_color_viridis()+
+  theme_classic()
+
+df_nyc %>% filter(county_code == 'Manhattan' | county_code == 'Bronx') %>% select(elementary_school_poverty,county_code,third_g_math,third_g_read) %>% 
+  ggplot(aes(x = county_code, y = third_g_math))+
+  geom_violin()+
+  geom_jitter(aes(color = elementary_school_poverty), width = .3, alpha = .5)+
+  scale_color_viridis()+
+  theme_classic()
+```
+This final graph for this section helps us to confirm the **correlation** between math and reading ability. It seems like there is a direct connection between the amount of poverty and the ability of the students. However, further testing would need to be done to establish causation. One thing worth noting is that it seems that being more impoverished causes worse reading but being wealthy causes better math. Said another way math seems to do better if you are rich and reading seems to do worse if you are poor. 
+
