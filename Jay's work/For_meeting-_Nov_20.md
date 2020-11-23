@@ -297,7 +297,7 @@ grad_rates_15<- data5%>%
 ``` r
 #grad_rates_15
 
-
+ 
 #average grad rates in 2010
 grad_rates_10<- data5%>%
   filter(msaname15 %in% c("Riverside-San Bernardino-Ontario, CA Metro Area", "San Diego-Carlsbad, CA Metro Area","Oxnard-Thousand Oaks-Ventura, CA Metro Area","Los Angeles-Long Beach-Anaheim, CA Metro Area" ,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD Metro Area", "Pittsburgh, PA Metro Area","Scranton--Wilkes-Barre--Hazleton, PA Metro Area","Houston-The Woodlands-Sugar Land, TX Metro Area    ","New York-Newark-Jersey City, NY-NJ-PA Metro Area "))%>%

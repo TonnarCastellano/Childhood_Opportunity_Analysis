@@ -136,10 +136,6 @@ ggplot(california, aes(x = reorder(region, deviation), y = deviation,
 
 ![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-``` r
-#How do I drop the "CA, Metro Area"
-```
-
 # Analysis 1: AP classes x Single-headed households in CA
 
 1)  Bar plot of all cities in California:
@@ -170,7 +166,7 @@ ggplot(CA, aes(x=reorder(region, avg_AP), y=avg_AP))+
            y="Percent", 
            x="City")+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 48, hjust = 1))
 ```
 
 ![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -243,11 +239,6 @@ b
 ```
 
 ![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
-
-``` r
-#which backround is better?
-#Grid lines?
-```
 
 2)  Surrounding cities of Los Angeles:
 
@@ -498,3 +489,22 @@ ggplot(college_enrolled_SD, aes(x=ED_COLLEGE))+
 ```
 
 ![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-12-4.png)<!-- -->
+
+``` r
+ggplot() +
+  geom_density(aes(ED_COLLEGE), alpha = .2, col="blue", data = college_enrolled_R) +
+  geom_density(aes(ED_COLLEGE),  alpha = .2, col="darkgreen",  data = college_enrolled_LA)+
+  geom_density(aes(ED_COLLEGE),  alpha = .2, col="purple",  data = college_enrolled_Ox)+
+  geom_density(aes(ED_COLLEGE),  alpha = .2,  col="red", data = college_enrolled_SD)+
+    theme_classic()+ 
+  theme(panel.grid.major.x=element_line())+ #add grid lines
+  scale_x_continuous(
+            breaks=seq(0, 75, 5),
+            labels = function(x){paste0(x*1, "%")}
+            )+ #change x axis labels+
+  labs(title = "Southern California High School's College enrollment rates in nearby institutions",
+       x="Percent"
+       )
+```
+
+![](for_meeting_nov17_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->

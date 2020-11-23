@@ -1,9 +1,10 @@
 ---
 title: "Meeting 17th"
 author: Jay Kim
-output: 
-  html_document:
-    code_folding: hide
+output: github_document
+pdf_document: default
+editor_options:
+  chunk_output_type: inline
 ---
 # Notes:
 
@@ -14,7 +15,7 @@ can we change our motivating question to 'How big cities compare to surrounding 
 
 - Things I like:
 i like how the base of our project is running comparisions -> drawing inferences/conclusions. much more interesting than plotting 10-15 graphs, and then just summarizing what we see from the plots. 
-
+ 
 ```{r}
 library(tidyverse)
 library(ggplot2)
