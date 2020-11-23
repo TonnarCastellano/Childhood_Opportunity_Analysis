@@ -1,8 +1,9 @@
 ---
 title: "Meeting 17th"
 author: Jay Kim
-output: github_document
-pdf_document: default
+output: 
+  html_document:
+    code_folding: hide
 ---
 # Notes:
 
@@ -90,7 +91,6 @@ ggplot(california, aes(x = reorder(region, deviation), y = deviation,
   )+
   theme_bw()
 
-#How do I drop the "CA, Metro Area"
 ```
 
 
@@ -118,7 +118,7 @@ ggplot(CA, aes(x=reorder(region, avg_AP), y=avg_AP))+
            y="Percent", 
            x="City")+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 48, hjust = 1))
 
 ```
 Although the x axis is unreadable, we can see that interestingly, the percent of students enrolled in AP courses are higher in cities. We will see if there is still a correlation in the cities of southern california! :)  
@@ -174,8 +174,6 @@ b<- ggplot(LA_less_single, aes(x=avg_AP))+
   theme(panel.grid.major.x=element_line())
 b
 
-#which backround is better?
-#Grid lines?
 ```
 
 
@@ -387,6 +385,22 @@ ggplot(college_enrolled_SD, aes(x=ED_COLLEGE))+
 ```
 
 
+```{r}
+ggplot() +
+  geom_density(aes(ED_COLLEGE), alpha = .2, col="blue", data = college_enrolled_R) +
+  geom_density(aes(ED_COLLEGE),  alpha = .2, col="darkgreen",  data = college_enrolled_LA)+
+  geom_density(aes(ED_COLLEGE),  alpha = .2, col="purple",  data = college_enrolled_Ox)+
+  geom_density(aes(ED_COLLEGE),  alpha = .2,  col="red", data = college_enrolled_SD)+
+    theme_classic()+ 
+  theme(panel.grid.major.x=element_line())+ #add grid lines
+  scale_x_continuous(
+            breaks=seq(0, 75, 5),
+            labels = function(x){paste0(x*1, "%")}
+            )+ #change x axis labels+
+  labs(title = "Southern California High School's College enrollment rates in nearby institutions",
+       x="Percent"
+       )
+```
 
 
 
