@@ -1,70 +1,127 @@
 ---
-title: "Data Cleaning"
+title: "EDA_team5_final"
+author: "Jay Kim, Soyeon Park, Tonnar Castellano, Ty Painter"
 ---
 
-
-#Necessary Libraries
+# Necessary Libraries
 ```{r}
 library(tidyverse)
 ```
 
-
-#Data Cleaning
-
-##Basic importating
-so many data points the nashville ones 
+## Basic importating
 ```{r message=FALSE, warning=FALSE}
+# Import data
 df <- read_csv('data.csv')
-df_nash <- df %>% filter(msaname15 == 'Nashville-Davidson--Murfreesboro--Franklin, TN Metro Area') 
 ```
 
-##Basic Exporlation
+## Basic Exporlation
 ```{r}
-dim(df_nash)
-head(df_nash)
-summary(df_nash)
+is.data.frame(df)
+dim(df)
+head(df)
+summary(df)
 ```
 
-##Cleaning Data Columns
-Most of the columns are hard to understand tried to make it easier
-```{r}
-df_nash <- df_nash %>% rename(top100 = in100) %>% 
-  rename(metro_area = msaid15) %>% 
-  rename( AP_Placement = ED_APENR) %>% 
-  rename(metro_name=msaname15) %>% 
-  rename(pop_under_18= pop)  %>% 
-  rename(adult_edu_attainment_perc = ED_ATTAIN) %>% 
-  rename(college_per_18_to_24=ED_COLLEGE) %>% 
-  rename(nursey_school_perc=ED_ECENROL) %>% 
-  rename(high_grad_rate=ED_HSGRAD) %>% 
-  rename(third_grade_math_prof=ED_MATH) %>% 
-  rename(third_grade_reading_prof=ED_READING) %>% 
-  rename(school_poverty_perc=ED_SCHPOV) %>% 
-  rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
-  rename(early_education_centers=ED_PRXECE) %>% 
-  rename(Egood_early_education_centers=ED_PRXHQECE) %>% 
-  rename(access_to_food=HE_FOOD) %>% 
-  rename(extreme_heat=HE_HEAT) %>% 
-  rename(health_insurance=HE_HLTHINS) %>% 
-  rename(ozone_amount=HE_OZONE) %>% 
-  rename(access_to_green=HE_GREEN) %>% 
-  rename(Walkability=HE_WALK) %>% 
-  rename(housing_vacancy_rate=HE_VACANCY) %>% 
-  rename(waste_dump_sites=HE_SUPRFND) %>% 
-  rename(aribone_microparticles=HE_PM25) %>% 
-  rename(pollutants=HE_RSEI) %>% 
-  rename(home_ownership=SE_HOME) %>% 
-  rename(highskill_employe=SE_OCC) %>% 
-  rename(median_income=SE_MHE) %>% 
-  rename(employement_rate=SE_EMPRAT) %>% 
-  rename(commute_duration=SE_JOBPROX) %>% 
-  rename(single_head_houses=SE_SINGLE)
-```
+This data is about child opportunity index in United States. It has 146112 rows and 39 columns. The unit of analysis is town and each row shows a town's properties related to child education in 2010 and 2015. The shape of data is long and the class of data is dataframe.
 
-Creates a new dataframe that gives us a count of the na's in each variable column
+# Data Cleaning
+
+## Column names
+
+Since there are so many observations in the data, we are going to focus on a specific state, Tennessee.
+
 ```{r message=FALSE, warning=FALSE}
-extra_NA<- df_nash %>% 
+# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
+df <- df %>% 
+  separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
+```
+
+According to the data dictionary, the unit of the 4 columns("ED_PRXECE", "ED_PRXHQECE", "HE_SUPRFND", "HE_RSEI") in the data is natural log. Natural log units change values less than e(2.71828) into negative numbers and this makes analysis difficult. Therefore, we are going to change the value of these 4 columns into original unit by using exp function.
+
+```{r}
+df<- df %>% 
+  mutate(num_edu_center = exp(ED_PRXECE)) %>%
+  mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%
+  mutate(num_waste_dump_site = exp(HE_SUPRFND)) %>%
+  mutate(population = exp(HE_RSEI)) %>%
+  select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)
+```
+
+Most of the columns are hard to understand. We tried to make it easier and obvious even without the data dictionary.
+
+```{r}
+df <- df %>% 
+  rename(id = `_id`) %>% 
+  rename(geo_id = geoid) %>% 
+  rename(metro_areas = in100) %>%
+  rename(area_code = msaid15) %>% 
+  rename(county_code = countyfips) %>%
+  rename(num_under_18 = pop) %>% 
+  rename(ratio_students_AP_enrolled = ED_APENR) %>%
+  rename(perc_over24_college_degree = ED_ATTAIN) %>%
+  rename(perc_18to24_nearby_college_enrolled = ED_COLLEGE) %>%
+  rename(perc_3to4_school_enrolled = ED_ECENROL) %>%
+  rename(perc_high_grad = ED_HSGRAD) %>%
+  rename(score_third_grade_math = ED_MATH) %>%
+  rename(score_third_grade_read = ED_READING) %>%
+  rename(perc_elementary_school_poverty = ED_SCHPOV) %>% 
+  rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
+  rename(perc_supermarket_nearby = HE_FOOD) %>% 
+  rename(perc_green_space_access = HE_GREEN) %>%
+  rename(days_temp_above90 = HE_HEAT) %>%
+  rename(perc_0to64_health_insurance = HE_HLTHINS) %>%
+  rename(mean_ozone_amount = HE_OZONE) %>%
+  rename(mean_microparticle = HE_PM25) %>%
+  rename(perc_housing_vacancy = HE_VACANCY) %>%
+  rename(index_walkability = HE_WALK) %>% 
+  rename(perc_below100_poverty = SE_POVRATE) %>%
+  rename(perc_household_public_assistance = SE_PUBLIC) %>%
+  rename(perc_home_ownership = SE_HOME) %>%
+  rename(perc_over15_high_skill = SE_OCC) %>%
+  rename(median_income=SE_MHE) %>%
+  rename(perc_adults_employed = SE_EMPRAT) %>%
+  rename(perc_worker_commute_over1hour = SE_JOBPROX) %>%
+  rename(perc_single_parent = SE_SINGLE)
+```
+
+Deleted unnecessary columns (They have the same values.)
+
+```{r}
+df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)
+```
+
+This is the final data after cleaning columns and values.
+
+```{r}
+head(df)
+```
+
+## Dealing with NA values.
+
+Creates a new dataframe that gives us a count of the na's in each variable column.
+
+```{r message=FALSE, warning=FALSE}
+extra_NA<- df %>% 
   select_if(function(x) any(is.na(x))) %>% 
   summarise_each(funs(sum(is.na(.))))
+
+extra_NA
 ```
 
+In order to decide how to deal with NA values, we made a subset which has the rows containing NA values to see their properties.
+
+```{r}
+NA_subset <- df[rowSums(is.na(df)) > 0, ]
+NA_subset
+```
+
+Some rows have more NAs than meaningful values. For these rows, due to the potential of providing misleading results for analysis, they were deleted from the dataset. 
+
+```{r}
+# Delete some rows having more NAs than meaningful values.
+df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
+```
+
+
+Now, our data is ready to be analyzed!
+We will have to decide how to to handle NA's
