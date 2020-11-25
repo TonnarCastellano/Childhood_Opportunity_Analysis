@@ -1,0 +1,194 @@
+---
+title: "Data Exploration for Philadelphia and surrounding Suburbs"
+output: github_document
+---
+
+# Load Libraries
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+```
+
+# Import Data
+
+```{r message=FALSE, warning=FALSE}
+df <- read_csv('/Users/TyPainter1/Desktop/Masters/Fall\ 2020/DS-5610/eda20-team5-project/Data\ Basics/data.csv') 
+```
+
+# Clean Data
+
+Most of the columns are hard to understand tried to make it easier
+```{r}
+df <- df %>% 
+  mutate(ED_PRXECE_NM = exp(ED_PRXECE)) %>%
+  mutate(ED_PRXHQECE_NM = exp(ED_PRXHQECE)) %>%
+  mutate(HE_SUPRFND_NM = exp(HE_SUPRFND)) %>%
+  mutate(HE_RSEI_NM = exp(HE_RSEI)) %>%
+  select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)
+```
+
+Most of the columns are hard to understand. We tried to make it easier and obvious even without the data dictionary.
+
+```{r}
+df <- df %>% 
+  rename(id = `_id`) %>% 
+  rename(geo_id = geoid) %>% 
+  rename(metro_areas = in100) %>%
+  rename(area_code = msaid15) %>% 
+  rename(county_code = countyfips) %>%
+  rename(num_under_18 = pop) %>% 
+  rename(ratio_students_AP_enrolled = ED_APENR) %>%
+  rename(perc_over24_college_degree = ED_ATTAIN) %>%
+  rename(perc_18to24_nearby_college_enrolled = ED_COLLEGE) %>%
+  rename(perc_3to4_school_enrolled = ED_ECENROL) %>%
+  rename(perc_high_grad = ED_HSGRAD) %>%
+  rename(score_third_grade_math = ED_MATH) %>%
+  rename(score_third_grade_read = ED_READING) %>%
+  rename(perc_elementary_school_poverty = ED_SCHPOV) %>% 
+  rename(perc_teacher_1and2_years=ED_TEACHXP) %>% 
+  rename(num_ECE_nearby = ED_PRXECE_NM) %>% 
+  rename(num_high_qual_ECE_nearby = ED_PRXHQECE_NM) %>% 
+  rename(perc_supermarket_nearby = HE_FOOD) %>% 
+  rename(perc_green_space_access = HE_GREEN) %>%
+  rename(days_temp_above90 = HE_HEAT) %>%
+  rename(perc_0to64_health_insurance = HE_HLTHINS) %>%
+  rename(mean_ozone_amount = HE_OZONE) %>%
+  rename(mean_microparticle = HE_PM25) %>%
+  rename(perc_housing_vacancy = HE_VACANCY) %>%
+  rename(index_walkability = HE_WALK) %>% 
+  rename(num_waste_dump_sites = HE_SUPRFND_NM) %>%
+  rename(index_air_pollutants = HE_RSEI_NM) %>%
+  rename(perc_below100_poverty = SE_POVRATE) %>%
+  rename(perc_household_public_assistance = SE_PUBLIC) %>%
+  rename(perc_home_ownership = SE_HOME) %>%
+  rename(perc_over15_high_skill = SE_OCC) %>%
+  rename(median_income=SE_MHE) %>%
+  rename(perc_adults_employed = SE_EMPRAT) %>%
+  rename(perc_worker_commute_over1hour = SE_JOBPROX) %>%
+  rename(perc_single_parent = SE_SINGLE)
+```
+
+# Basic Exporlation 
+
+```{r}
+philly <- df %>% 
+  filter(msaname15 == "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD Metro Area") %>% # filter Philly area
+  mutate(type = ifelse(county_code == 42101, "Philadelphia", "Suburb")) %>%  # mutate a city, suburb column;City of Phila. is 42101
+  mutate(county_code = replace(county_code, county_code == '10003', 'New Castle (DE)')) %>%
+  mutate(county_code = replace(county_code, county_code == '24015', 'Cecil (MD)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34005', 'Burlington (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34007', 'Camden (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34015', 'Gloucester (NJ)'))%>%
+  mutate(county_code = replace(county_code, county_code == '34033', 'Salem (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42029', 'Chester (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery (PA)'))%>%
+  mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia'))%>%
+   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+
+factor(philly$county_code, levels = c("New Castle (DE)", "Cecil (MD)", "Burlington (NJ)", "Camden (NJ)", "Gloucester (NJ)", "Salem (NJ)", "Bucks (PA)", "Chester (PA)", "Delaware (PA)", "Montgomery (PA)"))
+
+dim(philly)
+head(philly)
+summary(philly)
+
+philly %>%  group_by(stateusps, type) %>%
+  tally(sort = T) %>%
+  ungroup() %>%
+  arrange(desc(n)) # see the distribution among states                 
+
+philly %>% group_by(county_code, type, stateusps) %>%
+  tally(sort = T) %>%
+  ungroup() %>%
+  arrange(desc(n)) # see the distribution among counties
+
+philly %>% group_by(type) %>%
+  tally(sort = T) %>%
+  ungroup() %>%
+  arrange(desc(n)) # see the distribution among Philly and suburbs
+```
+
+```{r message=FALSE, warning=FALSE}
+philly %>% # find amount of NAs
+  select_if(function(x) any(is.na(x))) %>% 
+  summarise_each(funs(sum(is.na(.))))
+```
+
+# Exploratory Graphics
+
+```{r}
+philly %>% group_by(type, stateusps) %>% 
+  summarize(child_population = sum(num_under_18)) %>% 
+  ggplot() +
+  geom_col(aes(x = type, y = child_population, fill = reorder(stateusps, child_population)))
+
+philly %>% 
+  group_by(stateusps, county_code) %>% 
+  summarize(child_population = sum(num_under_18)) %>% 
+  ggplot(aes(x = reorder(stateusps, child_population), y = child_population, fill = county_code, label = county_code)) +
+  geom_col() +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  theme(legend.position = "none") +
+  scale_y_continuous(labels = function(x){ifelse(x>=1000000,paste0(x/1000000, "M"), paste0(x/1000, "K"))})
+
+philly %>% group_by(county_code, stateusps) %>% 
+  summarize(child_population = sum(num_under_18)) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(county_code, child_population), y = child_population, fill = stateusps)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+```{r}
+ggplot(philly, aes(x = type, y = perc_home_ownership)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = stateusps))
+
+ggplot(philly, aes(x = stateusps, y = perc_home_ownership)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = type)) +
+  geom_hline(yintercept = 77.06333, colour = "magenta", linetype = "longdash", size = .4)
+
+ggplot(philly, aes(x = county_code, y = perc_home_ownership)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = stateusps, shape = type)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+ggplot(philly, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_ownership)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = stateusps)) +
+  facet_wrap(~year, nrow = 2) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+```{r}
+ggplot(philly, aes(x = perc_over15_high_skill, y = perc_home_ownership)) +
+  geom_point(aes(col = type)) +
+  scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+  scale_x_continuous(labels = function(x){paste0(x, "%")})
+
+ggplot(philly, aes(x = median_income, y = perc_home_ownership)) +
+  geom_point(aes(col = type)) +
+  scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+  scale_x_continuous(labels = function(x){paste0("$", x/1000, "K")})
+```
+
+```{r}
+ggplot(philly, aes(x = type, y = perc_home_ownership)) +
+  geom_jitter(alpha=.4) +
+  scale_y_continuous(labels = function(x){paste0(x, "%")})
+
+ggplot(philly, aes(x = type, y = median_income)) +
+  geom_jitter(alpha=.4, aes(col = stateusps)) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+
+ggplot(philly, aes(x = type, y = perc_worker_commute_over1hour)) +
+  geom_jitter(alpha=.4, aes(col = stateusps)) +
+  labs(y = "Commute > 1 Hour") +
+  scale_y_continuous(labels = function(x){paste0(x, "%")}, limits = c(0, 35)) +
+  theme_classic() # violin?
+```
+
+
+
