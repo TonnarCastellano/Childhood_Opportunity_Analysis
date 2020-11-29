@@ -123,5 +123,44 @@ df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id 
 ```
 
 
+```{r}
+df <- df %>%
+  #NYC
+  mutate(county_code = replace(county_code, county_code == '36061', 'Manhattan')) %>% 
+  mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%
+  mutate(county_code = replace(county_code, county_code == '36081', 'Queens')) %>%
+  mutate(county_code = replace(county_code, county_code == '36005', 'Bronx')) %>%
+  #Philly
+  mutate(county_code = replace(county_code, county_code == '36085', 'Staten Island'))%>%
+  mutate(county_code = replace(county_code, county_code == '10003', 'New Castle (DE)')) %>%
+  mutate(county_code = replace(county_code, county_code == '24015', 'Cecil (MD)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34005', 'Burlington (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34007', 'Camden (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '34015', 'Gloucester (NJ)'))%>%
+  mutate(county_code = replace(county_code, county_code == '34033', 'Salem (NJ)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42029', 'Chester (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery (PA)')) %>%
+  mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia')) %>% 
+  #Houston
+  mutate(county_code = replace(county_code, county_code == "48201", "Harris")) %>%
+  mutate(county_code = replace(county_code, county_code == "48157", "Fort Bend")) %>%
+  mutate(county_code = replace(county_code, county_code == "48339", "Montgomery")) %>%
+  mutate(county_code = replace(county_code, county_code == "48167", "Galveston")) %>%
+  mutate(county_code = replace(county_code, county_code == "48039", "Brazoria")) %>% 
+  mutate(county_code = replace(county_code, county_code == "48291", "Liberty")) %>% 
+  mutate(county_code = replace(county_code, county_code == "48473", "Waller")) %>%
+  mutate(county_code = replace(county_code, county_code == "48071", "Chambers"))%>%
+  #LA
+  mutate(county_name = replace(county_code,county_code == "06111", "Ventura")) %>%
+  mutate(county_name= replace(county_code, county_code == "06059","Orange"))%>%
+  mutate(county_name= replace(county_code, county_code == "06071","San Bernardino"))%>%
+  mutate(county_name= replace(county_code,county_code == "06037", "Los Angeles"))%>%
+  mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)
+)
+
+
+```
+
 Now, our data is ready to be analyzed!
-We will have to decide how to to handle NA's
