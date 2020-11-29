@@ -122,6 +122,10 @@ Some rows have more NAs than meaningful values. For these rows, due to the poten
 df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
 ```
 
+```{r}
+View(df)
+```
+
 
 Now, our data is ready to be analyzed!
 We will have to decide how to to handle NA's
