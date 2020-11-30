@@ -21,7 +21,10 @@ library(tidyverse)
 ``` r
 library(ggplot2)
 library(readr)
+library(viridis)
 ```
+
+    ## Loading required package: viridisLite
 
 # Import Data
 
@@ -1096,13 +1099,42 @@ ggplot(philly, aes(x = stateusps, y = perc_home_ownership)) +
 ![](eda-philly_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 ``` r
-ggplot(philly, aes(x = county_code, y = perc_home_ownership)) +
+ggplot(philly, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_ownership)) +
   geom_violin() +
-  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = stateusps, shape = type)) +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+  geom_point(position = position_jitter(width = 0.3), alpha = .35, aes(color = median_income)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  scale_color_viridis(name = "Median Income",
+                      labels = function(x){paste0("$", x/1000, "K")}) +
+  scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+    labs(
+    x = "County",
+    y = "Home Ownership",
+    title = "Home Ownership in Philadelphia and Suburbs"
+  ) +
+  geom_hline(yintercept = median(philly$perc_home_ownership), color = "red", linetype = "dashed")
 ```
 
 ![](eda-philly_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
+
+``` r
+ggplot(philly, aes(x = reorder(county_code, median_income), y = median_income)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.3), alpha = .35, aes(color = perc_home_ownership)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  scale_color_viridis(name = "Home Ownership",
+                       labels = function(x){paste0(x, "%")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
+    labs(
+    x = "County",
+    y = "Median Income",
+    title = "Home Ownership in Philadelphia and Suburbs"
+  ) +
+  geom_hline(yintercept = median(philly$median_income), color = "red", linetype = "dashed") 
+```
+
+![](eda-philly_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
 
 ``` r
 ggplot(philly, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_ownership)) +
@@ -1112,7 +1144,7 @@ ggplot(philly, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
-![](eda-philly_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
+![](eda-philly_files/figure-gfm/unnamed-chunk-8-5.png)<!-- -->
 
 ``` r
 ggplot(philly, aes(x = perc_over15_high_skill, y = perc_home_ownership)) +

@@ -21,7 +21,10 @@ library(tidyverse)
 ``` r
 library(ggplot2)
 library(readr)
+library(viridis)
 ```
+
+    ## Loading required package: viridisLite
 
 # Import Data
 
@@ -110,7 +113,7 @@ ggplot(nyc, aes(x = reorder(county_code, perc_worker_commute_over1hour), y = per
   theme_classic()
 ```
 
-    ## Warning: Removed 1292 rows containing missing values (geom_point).
+    ## Warning: Removed 1289 rows containing missing values (geom_point).
 
 ![](eda-nyc_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
@@ -154,3 +157,39 @@ ggplot(nyc, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_own
 ```
 
 ![](eda-nyc_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->
+
+``` r
+ggplot(nyc, aes(x = reorder(county_code, perc_home_ownership), y = perc_home_ownership)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = median_income)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  scale_color_viridis(name = "Median Income",
+                      labels = function(x){paste0("$", x/1000, "K")}) +
+  scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+    labs(
+    x = "County",
+    y = "Home Ownership",
+    title = "Home Ownership in NYC and Boroughs"
+  ) +
+  geom_hline(yintercept = median(nyc$perc_home_ownership), color = "red", linetype = "dashed")
+```
+
+![](eda-nyc_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+ggplot(nyc, aes(x = reorder(county_code, median_income), y = median_income)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = perc_home_ownership)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  scale_color_viridis(name = "Home Ownership",
+                       labels = function(x){paste0(x, "%")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
+    labs(
+    x = "County",
+    y = "Median Income",
+    title = "Home Ownership in NYC and Boroughs"
+  ) +
+  geom_hline(yintercept = median(nyc$median_income), color = "red", linetype = "dashed")
+```
+
+![](eda-nyc_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
