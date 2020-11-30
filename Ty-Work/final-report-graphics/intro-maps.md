@@ -101,7 +101,7 @@ philly_map <- us_counties %>% filter(region %in% c("pennsylvania", "delaware", "
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         panel.background = element_blank()) +
-  labs(title = "Map of Philadelphia and Suburbs",
+  labs(title = "Philadelphia and Suburbs",
        subtitle = "Pennsylvania (New Jersey, Delaware, Maryland)") +
   geom_point(y = 39.9526, x = -75.1652, color = "green", size = 1.5) 
 
@@ -127,7 +127,7 @@ nyc_map <- us_counties %>% filter(region == "new york") %>%
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         panel.background = element_blank()) +
-  labs(title = "Map of New York City and Boroughs",
+  labs(title = "New York City and Boroughs",
        subtitle = "New York") +
   geom_point(y = 40.7128, x = -74.0060, color = "green") 
 
@@ -136,7 +136,7 @@ nyc_map
 
 ![](intro-maps_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-# Map of Los Angeles and Suburbs
+# Los Angeles and Suburbs
 
 ``` r
 la_map <- us_counties %>% filter(region == "california") %>%
@@ -153,7 +153,7 @@ la_map <- us_counties %>% filter(region == "california") %>%
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         panel.background = element_blank()) +
-  labs(title = "Map of Los Angeles and Suburbs",
+  labs(title = "Los Angeles and Suburbs",
        subtitle = "California") +
   geom_point(y = 34.0522, x = -118.2437, color = "green") 
 
@@ -162,7 +162,7 @@ la_map
 
 ![](intro-maps_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-# Map of Houston and Suburbs
+# Houston and Suburbs
 
 ``` r
 houston_map <- us_counties %>% filter(region == "texas") %>%
@@ -179,7 +179,7 @@ houston_map <- us_counties %>% filter(region == "texas") %>%
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         panel.background = element_blank()) +
-  labs(title = "Map of Houston and Suburbs",
+  labs(title = "Houston and Suburbs",
        subtitle = "Texas") +
   geom_point(y = 29.7604, x = -95.3698, color = "green") 
 
