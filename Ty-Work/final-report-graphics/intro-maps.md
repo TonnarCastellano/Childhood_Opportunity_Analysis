@@ -86,9 +86,8 @@ usa_map
 ``` r
 us_counties <- map_data("county")
 
-philly_map <- us_counties %>% filter(region %in% c("pennsylvania", "delaware", "maryland", "new jersey")) %>%
-  mutate(county_used = ifelse(subregion %in% c("new castle", "cecil", "burlington", "camden", "gloucester", "salem", "bucks", "chester", "delaware", "philadelphia"), "y",
-                              ifelse(region == "pennsylvania" & subregion == "montgomery", "y", "n"))) %>% 
+philly_map <- us_counties %>% filter(region == "pennsylvania") %>%
+  mutate(county_used = ifelse(subregion %in% c("bucks", "chester", "delaware", "philadelphia", "montgomery"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
@@ -102,7 +101,7 @@ philly_map <- us_counties %>% filter(region %in% c("pennsylvania", "delaware", "
         axis.ticks = element_blank(),
         panel.background = element_blank()) +
   labs(title = "Philadelphia and Suburbs",
-       subtitle = "Pennsylvania (New Jersey, Delaware, Maryland)") +
+       subtitle = "Pennsylvania") +
   geom_point(y = 39.9526, x = -75.1652, color = "green", size = 1.5) 
 
 philly_map
@@ -140,7 +139,7 @@ nyc_map
 
 ``` r
 la_map <- us_counties %>% filter(region == "california") %>%
-  mutate(county_used = ifelse(subregion %in% c("ventura", "orange", "kern", "riverside", "san bernardino", "los angeles"), "y", "n")) %>% 
+  mutate(county_used = ifelse(subregion %in% c("ventura", "orange", "kern", "san bernardino", "los angeles"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
