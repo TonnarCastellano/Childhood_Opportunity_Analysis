@@ -67,7 +67,8 @@ df <- df %>%
   rename(median_income=SE_MHE) %>%
   rename(perc_adults_employed = SE_EMPRAT) %>%
   rename(perc_worker_commute_over1hour = SE_JOBPROX) %>%
-  rename(perc_single_parent = SE_SINGLE)
+  rename(perc_single_parent = SE_SINGLE) 
+usa_med_inc <- median(df$median_income, na.rm = TRUE)
 ```
 
 # Create Data Frames 
@@ -75,43 +76,37 @@ df <- df %>%
 ```{r}
 # Philly
 philly <- df %>% 
-  filter(msaname15 == "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD Metro Area") %>% 
-  mutate(type = ifelse(county_code == 42101, "Philadelphia", "Suburb")) %>%  # mutate a city, suburb column;City of Phila. is 42101
-  mutate(county_code = replace(county_code, county_code == '10003', 'New Castle (DE)')) %>%
-  mutate(county_code = replace(county_code, county_code == '24015', 'Cecil (MD)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34005', 'Burlington (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34007', 'Camden (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34015', 'Gloucester (NJ)'))%>%
-  mutate(county_code = replace(county_code, county_code == '34033', 'Salem (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42029', 'Chester (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery (PA)'))%>%
-  mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia'))%>%
+  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks')) %>%
+  mutate(county_code = replace(county_code, county_code == '42029', 'Chester')) %>%
+  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware')) %>%
+  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery')) %>%
+  mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia')) %>% 
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+philly <- philly %>% filter(county_code %in% c('Bucks', 'Chester', 'Delaware', 'Montgomery', 'Philadelphia'))
 
-philly$county_code = factor(philly$county_code, levels = c("New Castle (DE)", "Cecil (MD)", "Burlington (NJ)", "Camden (NJ)", "Gloucester (NJ)", "Salem (NJ)", "Bucks (PA)", "Chester (PA)", "Delaware (PA)", "Montgomery (PA)", "Philadelphia"))
+philly$county_code = factor(philly$county_code, levels = c("Bucks", "Chester", "Delaware", "Montgomery", "Philadelphia"))
 
 # NYC
-nyc <- df %>% filter(
-    county_code == '36061' |
-    county_code ==  '36047' |
-    county_code ==  '36081' |
-    county_code ==  '36005' |
-    county_code ==  '36085' 
-)
-nyc <- nyc %>%
+nyc <- df %>%
   mutate(county_code = replace(county_code, county_code == '36061', 'Manhattan')) %>% 
   mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%
-  mutate(county_code =  replace(county_code, county_code == '36081', 'Queens')) %>%
-  mutate(county_code =  replace(county_code, county_code == '36005', 'Bronx')) %>%
-  mutate(county_code =  replace(county_code, county_code == '36085', 'Staten Island'))%>%
+  mutate(county_code = replace(county_code, county_code == '36081', 'Queens')) %>%
+  mutate(county_code = replace(county_code, county_code == '36005', 'Bronx')) %>%
+  mutate(county_code = replace(county_code, county_code == '36085', 'Staten Island'))%>%
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+nyc <- nyc %>% filter(county_code %in% c('Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'))
 
 nyc$county_code = factor(nyc$county_code, levels = c("Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"))
 
 # Houston
-houston <- df %>% filter((county_code == "48201") | (county_code == "48157")| (county_code == "48339")|(county_code == "48167")|(county_code == "48039")|(county_code == "48291")|(county_code == "48473")|(county_code == "48071")) %>% 
+houston <- df %>% filter((county_code == "48201") | 
+                           (county_code == "48157")| 
+                           (county_code == "48339")|
+                           (county_code == "48167")|
+                           (county_code == "48039")|
+                           (county_code == "48291")|
+                           (county_code == "48473")|
+                           (county_code == "48071")) %>% 
   mutate(group = ifelse(county_code == "48201", "city", "suburb")) %>%
   mutate(county_name = case_when(county_code == "48201" ~ "Harris", 
                                  county_code == "48157" ~ "Fort Bend", 
@@ -127,14 +122,15 @@ houston$county_name = factor(houston$county_name, levels = c("Harris", "Fort Ben
 
 # Los Angeles
 la <- df %>%
-  mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
-                                county_code == "06059" ~ "Orange",
-                                county_code == "06071" ~ "San Bernardino",
-                                county_code == "06037" ~ "Los Angeles"))%>%
-  drop_na(county_name ) %>% 
+  mutate(county_code = replace(county_code,county_code == "06111", "Ventura")) %>%
+  mutate(county_code = replace(county_code, county_code == "06059","Orange"))%>%
+  mutate(county_code = replace(county_code, county_code == "06071","San Bernardino"))%>%
+  mutate(county_code = replace(county_code,county_code == "06037", "Los Angeles"))%>%
+  mutate(county_code = replace(county_code,county_code == "06029", "Kern"))%>%
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+la <- la %>% filter(county_code %in% c("Ventura", "Orange", "San Bernardino", "Los Angeles", "Kern"))
 
-la$county_name = factor(la$county_name, levels = c("Ventura", "Orange", "San Bernardino", "Los Angeles"))
+la$county_code = factor(la$county_code, levels = c("Ventura", "Orange", "San Bernardino", "Los Angeles", "Kern"))
 ```
 
 # Final Graphics 
@@ -148,13 +144,13 @@ ggplot(philly, aes(x = reorder(county_code, median_income), y = median_income)) 
   scale_color_viridis(name = "Home Ownership",
                        labels = function(x){paste0(x, "%")})+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")},
-                     breaks = seq(0,300000,50000)) +
-    labs(
-    x = "County",
-    y = "Median Income",
-    title = "Home Ownership in Philadelphia and Suburbs"
-  ) +
-  geom_hline(yintercept = median(philly$median_income), color = "red", linetype = "dashed")
+                     breaks = seq(0,275000,50000)) +
+  labs(x = "County",
+       y = "Median Income",
+       title = "Home Ownership in Philadelphia and Suburbs",
+       subtitle = "vs. National Average") +
+  geom_hline(yintercept = median(philly$median_income), color = "red", linetype = "dashed") +
+  expand_limits(y = c(0,275000))
 ```
 
 ## New York City
@@ -167,13 +163,13 @@ ggplot(nyc, aes(x = reorder(county_code, median_income), y = median_income)) +
   scale_color_viridis(name = "Home Ownership",
                        labels = function(x){paste0(x, "%")})+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, 
-                     breaks = seq(0,300000,50000)) +
-    labs(
-    x = "County",
-    y = "Median Income",
-    title = "Home Ownership in NYC and Boroughs"
-  ) +
-  geom_hline(yintercept = median(nyc$median_income), color = "red", linetype = "dashed")
+                     breaks = seq(0,275000,50000)) +
+  labs(x = "County",
+       y = "Median Income",
+       title = "Home Ownership in NYC and Boroughs",
+       subtitle = "vs. National Average") +
+  geom_hline(yintercept = median(nyc$median_income), color = "red", linetype = "dashed") +
+  expand_limits(y = c(0,275000))
 ```
 
 ## Houston
@@ -186,18 +182,18 @@ ggplot(houston, aes(x = reorder(county_name, median_income), y = median_income))
   scale_color_viridis(name = "Home Ownership",
                        labels = function(x){paste0(x, "%")})+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, 
-                     breaks = seq(0,300000,50000)) +
-    labs(
-    x = "County",
-    y = "Median Income",
-    title = "Home Ownership in Houston and Suburbs"
-  ) +
-  geom_hline(yintercept = median(houston$median_income), color = "red", linetype = "dashed")
+                     breaks = seq(0,275000,50000)) +
+  labs(x = "County",
+       y = "Median Income",
+       title = "Home Ownership in Houston and Suburbs",
+       subtitle = "vs. National Average") +
+  geom_hline(yintercept = usa_med_inc, color = "red", linetype = "dashed") +
+  expand_limits(y = c(0,275000))
 ```
 
 ## Los Angeles
 ```{r}
-ggplot(la, aes(x = reorder(county_name, median_income), y = median_income)) +
+ggplot(la, aes(x = reorder(county_code, median_income), y = median_income)) +
   geom_violin() +
   geom_point(position = position_jitter(width = 0.4), alpha = .3, aes(color = perc_home_ownership)) +
   theme_bw() +
@@ -205,11 +201,11 @@ ggplot(la, aes(x = reorder(county_name, median_income), y = median_income)) +
   scale_color_viridis(name = "Home Ownership",
                        labels = function(x){paste0(x, "%")})+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, 
-                     breaks = seq(0,300000,50000)) +
-    labs(
-    x = "County",
-    y = "Median Income",
-    title = "Home Ownership in Los Angeles and Suburbs"
-  ) +
-  geom_hline(yintercept = median(la$median_income), color = "red", linetype = "dashed")
+                     breaks = seq(0,275000,50000)) +
+  labs(x = "County",
+       y = "Median Income",
+       title = "Home Ownership in Los Angeles and Suburbs",
+       subtitle = "vs. National Average") +
+  geom_hline(yintercept = usa_med_inc, color = "red", linetype = "dashed") +
+  expand_limits(y = c(0,275000))
 ```
