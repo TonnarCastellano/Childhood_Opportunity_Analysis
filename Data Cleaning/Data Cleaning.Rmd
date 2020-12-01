@@ -6,6 +6,7 @@ title: "Data Cleaning"
 ```{r}
 library(tidyverse)
 library(viridis)
+library(factoextra)
 ```
 
 ## Basic importating
@@ -134,18 +135,12 @@ df <- df %>%
   mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%
   mutate(county_code = replace(county_code, county_code == '36081', 'Queens')) %>%
   mutate(county_code = replace(county_code, county_code == '36005', 'Bronx')) %>%
-  #Philly
   mutate(county_code = replace(county_code, county_code == '36085', 'Staten Island'))%>%
-  mutate(county_code = replace(county_code, county_code == '10003', 'New Castle (DE)')) %>%
-  mutate(county_code = replace(county_code, county_code == '24015', 'Cecil (MD)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34005', 'Burlington (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34007', 'Camden (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '34015', 'Gloucester (NJ)'))%>%
-  mutate(county_code = replace(county_code, county_code == '34033', 'Salem (NJ)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42029', 'Chester (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware (PA)')) %>%
-  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery (PA)')) %>%
+  #Philly
+  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks')) %>%
+  mutate(county_code = replace(county_code, county_code == '42029', 'Chester')) %>%
+  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware')) %>%
+  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery')) %>%
   mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia')) %>% 
   #Houston
   mutate(county_code = replace(county_code, county_code == "48201", "Harris")) %>%
@@ -157,14 +152,53 @@ df <- df %>%
   mutate(county_code = replace(county_code, county_code == "48473", "Waller")) %>%
   mutate(county_code = replace(county_code, county_code == "48071", "Chambers"))%>%
   #LA
-  mutate(county_name = replace(county_code,county_code == "06111", "Ventura")) %>%
-  mutate(county_name= replace(county_code, county_code == "06059","Orange"))%>%
-  mutate(county_name= replace(county_code, county_code == "06071","San Bernardino"))%>%
-  mutate(county_name= replace(county_code,county_code == "06037", "Los Angeles"))%>%
-  mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)
-)
+  mutate(county_code = replace(county_code,county_code == "06111", "Ventura")) %>%
+  mutate(county_code = replace(county_code, county_code == "06059","Orange"))%>%
+  mutate(county_code = replace(county_code, county_code == "06071","San Bernardino"))%>%
+  mutate(county_code = replace(county_code,county_code == "06037", "Los Angeles"))%>%
+  mutate(county_code = replace(county_code,county_code == "06029", "Kern"))%>%
+  mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
 
 
+
+clustering <-
+  df %>% filter(
+    county_code == 'Manhattan'|
+    county_code == 'Brooklyn'|
+    county_code == 'Queens'|
+    county_code == 'Bronx'|
+    county_code == 'Staten Island'|
+    county_code == 'Bucks'|
+    county_code == 'Chester'|
+    county_code == 'Delaware'|
+    county_code == 'Montgomery'|
+    county_code == 'Philadelphia'|
+    county_code == 'Harris'|
+    county_code == 'Montgomery'|
+    county_code == 'Galveston'|
+    county_code == 'Brazoria'|
+    county_code == 'Liberty'|
+    county_code == 'Waller'|
+    county_code == 'Chambers'|
+    county_code == 'Venture'|
+    county_code == 'Orange'|
+    county_code == 'San Bernardino'|
+    county_code == 'Los Angeles'|
+    county_code == 'Kern'
+  ) %>% na.omit()
+
+extra_NA<- clustering %>% 
+  select_if(function(x) any(is.na(x))) %>% 
+  summarise_each(funs(sum(is.na(.))))
+
+county_names <- data.frame(clustering$county_code)
 ```
+
+
+```{r}
+fviz_nbclust(clustering,FUNcluster = kmeans)
+```
+
+
 
 Now, our data is ready to be analyzed!
