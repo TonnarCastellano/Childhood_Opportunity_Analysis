@@ -88,7 +88,8 @@ la <- df%>%
   mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
                                 county_code == "06059" ~ "Orange",
                                 county_code == "06071" ~ "San Bernardino",
-                                county_code == "06037" ~ "Los Angeles"))%>%
+                                county_code == "06037" ~ "Los Angeles",
+                                county_code == "06029" ~ "Kern"))%>%
   drop_na(county_name )
 
 
@@ -104,7 +105,7 @@ philly <- df%>%
   mutate(county_name = case_when(county_code == "42101" ~ "Philadelphia", 
                                  county_code == "42045" ~ "Delaware", 
                                  county_code == "42029" ~ "Chester", 
-                                 county_code == "42091" ~ "Montomery",
+                                 county_code == "42091" ~ "Montgomery",
                                  county_code == "42017" ~ "Bucks"))%>%
   drop_na(county_name)
 
@@ -160,7 +161,7 @@ ggplot(income_Philly, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Philadelphia",
     subtitle="We can see how each city is above or below the state average, $78,030.84",
     x = "City",
     y = "Amount Difference"
@@ -173,7 +174,7 @@ ggplot(income_tx, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Houston",
     subtitle="We can see how each city is above or below the state average, $72,739.39",
     x = "City",
     y = "Amount Difference"
@@ -186,7 +187,7 @@ ggplot(income_la, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Los Angeles",
     subtitle="We can see how each city is above or below the state average, $74,260.12",
     x = "City",
     y = "Amount Difference"
@@ -199,7 +200,7 @@ ggplot(income_ny, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in New York",
     subtitle="We can see how each city is above or below the state average, $65,819.36",
     x = "City",
     y = "Amount Difference"
@@ -419,24 +420,24 @@ ggplot()+
 # 3. Grad Rates
 ```{r}
 data1 <- df%>%
-  mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
-                                county_code == "06059" ~ "Orange",
-                                county_code == "06071" ~ "San Bernardino",
-                                county_code == "06037" ~ "Los Angeles",
-                                county_code == "48201" ~ "Harris (Houston)", 
-                                county_code == "48157" ~ "Fort Bend", 
-                                county_code == "48339" ~ "Montgomery", 
-                                county_code == "48167" ~ "Galveston",
-                                county_code == "42101" ~ "Philadelphia", 
-                                county_code == "42045" ~ "Delaware", 
-                                county_code == "42029" ~ "Chester", 
-                                county_code == "42091" ~ "Montomery",
-                                county_code == "42017" ~ "Bucks",
-                                county_code == "36061" ~ "Manhattan", 
-                                county_code == "36047" ~ "Brooklyn", 
-                                county_code == "36081" ~ "Queens", 
-                                county_code == "36005" ~ "Bronx",
-                                county_code == "36085" ~ "Staten Island"))%>%
+  mutate(county_name = case_when(county_code == "06111" ~ "Ventura, CA",
+                                county_code == "06059" ~ "Orange, CA",
+                                county_code == "06071" ~ "San Bernardino, CA",
+                                county_code == "06037" ~ "Los Angeles, CA",
+                                county_code == "48201" ~ "Harris (Houston), TX", 
+                                county_code == "48157" ~ "Fort Bend, TX", 
+                                county_code == "48339" ~ "Montgomery, TX", 
+                                county_code == "48167" ~ "Galveston, TX",
+                                county_code == "42101" ~ "Philadelphia, PA", 
+                                county_code == "42045" ~ "Delaware, PA", 
+                                county_code == "42029" ~ "Chester, PA", 
+                                county_code == "42091" ~ "Montomery, PA",
+                                county_code == "42017" ~ "Bucks, PA",
+                                county_code == "36061" ~ "Manhattan, NY", 
+                                county_code == "36047" ~ "Brooklyn, NY", 
+                                county_code == "36081" ~ "Queens, NY", 
+                                county_code == "36005" ~ "Bronx, NY",
+                                county_code == "36085" ~ "Staten Island, NY"))%>%
   drop_na(county_name)
 data1
 ```
@@ -447,28 +448,30 @@ data <-data1 %>%
 
 #average grad rates in 2015
 grad_rates_15<- data %>%
-  filter(county_name %in% c("Ventura", "Orange", "Los Angeles", "San Bernardino", "Harris", "Fort Bend" , "Montgomery", "Galveston", "Philadelphia", "Delaware", "Chester",  "Montomery", "Bucks" ,"Manhattan", "Brooklyn",  "Queens", "Bronx", "Staten Island"))%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
   filter(year == '2015')%>%
   group_by(county_name,year)%>%
   summarise(mean_grad_2015 = mean(hs_grads))
 
 #average grad rates in 2010
 grad_rates_10<- data %>%
-  filter(county_name %in% c("Ventura", "Orange", "Los Angeles", "San Bernardino", "Harris", "Fort Bend" , "Montgomery", "Galveston", "Philadelphia", "Delaware", "Chester",  "Montomery", "Bucks" ,"Manhattan", "Brooklyn",  "Queens", "Bronx", "Staten Island"))%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
   filter(year == '2010')%>%
   group_by(county_name,year)%>%
   summarise(mean_grad_2010 = mean(hs_grads))
 
-grad_rate <- inner_join(grad_rates_10, grad_rates_15, by= "county_name")%>%
-  select(county_name, year.x, year.y, mean_grad_2010, mean_grad_2015)
+grad_rate_CA <- inner_join(grad_rates_10, grad_rates_15, by= "county_name")%>%
+  select(county_name, year.x, year.y, mean_grad_2010, mean_grad_2015)%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA"))
 ```
 
 
 ```{r}
-ggplot(grad_rate, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010)) + 
-        geom_dumbbell(color= "olivedrab", 
+ggplot(grad_rate_CA, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010)) +
+  geom_dumbbell(col="olivedrab",
                       size=0.75, 
                       point.colour.l="black") +
+  #geom_line(arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in high school graduation rate", 
        x = "Percent Graduated",
        y = "Region")+
@@ -476,8 +479,7 @@ ggplot(grad_rate, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010))
   theme(panel.grid.major.x=element_line())+
    scale_x_continuous(
             breaks=seq(50, 100, 2),
-            labels = function(x){paste0(x*1, '%')}
-            )
+            labels = function(x){paste0(x*1, '%')})
 ```
 
 
