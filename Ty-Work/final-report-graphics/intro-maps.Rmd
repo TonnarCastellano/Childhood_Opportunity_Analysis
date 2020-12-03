@@ -125,7 +125,7 @@ la_map
 
 ```{r}
 houston_map <- us_counties %>% filter(region == "texas") %>%
-  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "galveston", "montgomery", "brazoria", "chambers", "waller", "liberty"), "y", "n")) %>% 
+  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "montgomery", "waller", "liberty"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
