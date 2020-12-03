@@ -59,7 +59,7 @@ df<- df %>%
   mutate(num_waste_dump_site = exp(HE_SUPRFND)) %>%
   mutate(population = exp(HE_RSEI)) %>%
   select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)
-
+ 
 df <- df %>% 
   rename(id = `_id`) %>% 
   rename(geo_id = geoid) %>% 
