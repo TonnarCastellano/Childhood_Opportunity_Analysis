@@ -6,6 +6,7 @@ pdf_document: default
 ---
 
 # Necessary Libraries
+
 ```{r}
 library(tidyverse)
 library(viridis)
