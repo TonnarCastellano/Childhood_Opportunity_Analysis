@@ -161,11 +161,8 @@ tx <- df%>%
   mutate(county_name = case_when(county_code == "48201" ~ "Harris (Houston)", 
                                  county_code == "48157" ~ "Fort Bend", 
                                  county_code == "48339" ~ "Montgomery", 
-                                 county_code == "48167" ~ "Galveston", 
-                                 county_code == "48039" ~ "Brazoria", 
                                  county_code == "48291" ~ "Liberty", 
-                                 county_code == "48473" ~ "Waller", 
-                                 county_code == "48071" ~ "Chambers"))%>%
+                                 county_code == "48473" ~ "Waller"))%>%
   drop_na(county_name)
 
 
@@ -418,8 +415,6 @@ ggplot()+
   theme(panel.grid.major.x=element_line())
 ```
 
-    ## Warning: Removed 8 rows containing non-finite values (stat_density).
-
 ![](Dec_6_files/figure-gfm/unnamed-chunk-10-2.png)<!-- --> Philadelphia
 :
 
@@ -637,11 +632,8 @@ data1 <- df%>%
                                 county_code == "48201" ~ "Harris (Houston), TX", 
                                 county_code == "48157" ~ "Fort Bend, TX", 
                                 county_code == "48339" ~ "Montgomery, TX", 
-                                county_code == "48167" ~ "Galveston, TX", 
-                                county_code == "48039" ~ "Brazoria, TX", 
                                 county_code == "48291" ~ "Liberty, TX", 
                                 county_code == "48473" ~ "Waller, TX", 
-                                county_code == "48071" ~ "Chambers, TX",
                                 county_code == "42101" ~ "Philadelphia, PA", 
                                 county_code == "42045" ~ "Delaware, PA", 
                                 county_code == "42029" ~ "Chester, PA", 
@@ -691,7 +683,7 @@ la_rates_bad <-  grad_rates_la %>%
 
 #Hou
 grad_rates_hou<- data %>%
-  filter(county_name %in% c("Harris (Houston), TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Liberty, TX", "Waller, TX","Chambers, TX", "Brazoria, TX"))%>%
+  filter(county_name %in% c("Harris (Houston), TX", "Fort Bend, TX" , "Montgomery, TX", "Liberty, TX", "Waller, TX"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
 ```
@@ -700,9 +692,9 @@ grad_rates_hou<- data %>%
 
 ``` r
 hou_rates_good <- grad_rates_hou %>% 
-  filter(county_name %in% c("Chambers, TX", "Fort Bend, TX", "Galveston, TX", "Liberty, TX" ,"Waller, TX", "Harris (Houston), TX"))
+  filter(county_name %in% c("Fort Bend, TX", "Liberty, TX" ,"Waller, TX", "Harris (Houston), TX"))
 hou_rates_bad <-  grad_rates_hou %>% 
-  filter(county_name %in% c("Montgomery, TX" , "Brazoria, TX"))
+  filter(county_name %in% c("Montgomery, TX" ))
 
 #Philly
 grad_rates_philly<- data %>%
