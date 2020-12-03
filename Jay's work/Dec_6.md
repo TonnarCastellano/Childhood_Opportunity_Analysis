@@ -387,7 +387,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_hou)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = hou_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Houston",
     x="Ratio",
     y="Frequency"
@@ -406,7 +406,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_hou)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_hou_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Suburbs of Houston",
     x="Ratio",
     y="Frequency"
@@ -428,7 +428,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_philly)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = philly_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Philadelphia",
     x="Ratio",
     y="Frequency"
@@ -449,7 +449,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_philly)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_philly_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Suburbs of Philadelphia",
     x="Ratio",
     y="Frequency"
@@ -470,7 +470,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = la_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Los Angeles",
     x="Ratio",
     y="Frequency"
@@ -493,7 +493,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_la_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Suburbs of Los Angeles",
     x="Ratio",
     y="Frequency"
@@ -516,7 +516,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_q_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = q_ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Queens",
     x="Ratio",
     y="Frequency"
@@ -539,7 +539,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_s_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = s_ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Staten Island",
     x="Ratio",
     y="Frequency"
@@ -562,7 +562,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Manhattan",
     x="Ratio",
     y="Frequency"
@@ -585,7 +585,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_b_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = b_ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Bronx",
     x="Ratio",
     y="Frequency"
@@ -608,7 +608,7 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_k_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = k_ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
     subtitle="Brookyn",
     x="Ratio",
     y="Frequency"
