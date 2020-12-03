@@ -11,8 +11,8 @@ library(tidyverse)
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
-    ## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
-    ## ✓ readr   1.3.1     ✓ forcats 0.5.0
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.4.0     ✓ forcats 0.5.0
 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
@@ -138,23 +138,17 @@ nyc$county_code = factor(nyc$county_code, levels = c("Manhattan", "Brooklyn", "Q
 houston <- df %>% filter((county_code == "48201") | 
                            (county_code == "48157")| 
                            (county_code == "48339")|
-                           (county_code == "48167")|
-                           (county_code == "48039")|
                            (county_code == "48291")|
-                           (county_code == "48473")|
-                           (county_code == "48071")) %>% 
+                           (county_code == "48473")) %>% 
   mutate(group = ifelse(county_code == "48201", "city", "suburb")) %>%
   mutate(county_name = case_when(county_code == "48201" ~ "Harris", 
                                  county_code == "48157" ~ "Fort Bend", 
                                  county_code == "48339" ~ "Montgomery", 
-                                 county_code == "48167" ~ "Galveston", 
-                                 county_code == "48039" ~ "Brazoria", 
                                  county_code == "48291" ~ "Liberty", 
-                                 county_code == "48473" ~ "Waller", 
-                                 county_code == "48071" ~ "Chambers")) %>% 
+                                 county_code == "48473" ~ "Waller")) %>% 
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
 
-houston$county_name = factor(houston$county_name, levels = c("Harris", "Fort Bend", "Galveston", "Montgomery", "Brazoria", "Chambers", "Waller", "Liberty"))
+houston$county_name = factor(houston$county_name, levels = c("Harris", "Fort Bend", "Montgomery", "Waller", "Liberty"))
 
 # Los Angeles
 la <- df %>%
