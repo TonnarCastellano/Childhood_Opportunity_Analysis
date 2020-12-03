@@ -1,23 +1,58 @@
----
-title: "For meeting Nov 29"
-author: Jay Kim
-output: github_document
-pdf_document: default
----
----
-title: "Data Cleaning"
----
+For meeting Dec 6
+================
+Jay Kim
 
 # Necessary Libraries
-```{r}
+
+``` r
 library(tidyverse)
+```
+
+    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+
+    ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+    ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.3.1     ✓ forcats 0.5.0
+
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
 library(viridis)
+```
+
+    ## Loading required package: viridisLite
+
+``` r
 # Import data
 library(readr)
 df <- read_csv("/Users/jaykim/Documents/EDA/eda20-team5-project/Jay's work/data.csv")# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   geoid = col_character(),
+    ##   msaname15 = col_character(),
+    ##   countyfips = col_character(),
+    ##   statefips = col_character(),
+    ##   stateusps = col_character()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
 df <- df %>% 
   separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
+```
 
+    ## Warning: Expected 4 pieces. Additional pieces discarded in 61334 rows [337, 338,
+    ## 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354,
+    ## 355, 356, ...].
+
+``` r
 df<- df %>% 
   mutate(num_edu_center = exp(ED_PRXECE)) %>%
   mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%
@@ -63,27 +98,56 @@ df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)
 extra_NA<- df %>% 
   select_if(function(x) any(is.na(x))) %>% 
   summarise_each(funs(sum(is.na(.))))
+```
 
+    ## Warning: `summarise_each_()` is deprecated as of dplyr 0.7.0.
+    ## Please use `across()` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+    ## Warning: `funs()` is deprecated as of dplyr 0.8.0.
+    ## Please use a list of either functions or lambdas: 
+    ## 
+    ##   # Simple named list: 
+    ##   list(mean = mean, median = median)
+    ## 
+    ##   # Auto named with `tibble::lst()`: 
+    ##   tibble::lst(mean, median)
+    ## 
+    ##   # Using lambdas
+    ##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+``` r
 NA_subset <- df[rowSums(is.na(df)) > 0, ]
 
 # Delete some rows having more NAs than meaningful values.
 df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
 ```
 
-```{r}
+``` r
 library(tidyverse)
 library(ggplot2)
 library(readr)
 library(ggalt)
 ```
 
+    ## Registered S3 methods overwritten by 'ggalt':
+    ##   method                  from   
+    ##   grid.draw.absoluteGrob  ggplot2
+    ##   grobHeight.absoluteGrob ggplot2
+    ##   grobWidth.absoluteGrob  ggplot2
+    ##   grobX.absoluteGrob      ggplot2
+    ##   grobY.absoluteGrob      ggplot2
 
-1. Median Income bar
-2. AP course - family income
-3. Grad Rates
+1.  Median Income bar
+2.  AP course - family income
+3.  Grad Rates
 
 County Fips Codes:
-```{r}
+
+``` r
 la <- df%>%
   mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
                                 county_code == "06059" ~ "Orange",
@@ -94,7 +158,7 @@ la <- df%>%
 
 
 tx <- df%>%
-  mutate(county_name = case_when(county_code == "48201" ~ "Harris", 
+  mutate(county_name = case_when(county_code == "48201" ~ "Harris (Houston)", 
                                  county_code == "48157" ~ "Fort Bend", 
                                  county_code == "48339" ~ "Montgomery", 
                                  county_code == "48167" ~ "Galveston", 
@@ -123,17 +187,23 @@ ny <- df%>%
   drop_na(county_name)
 ```
 
-# 1. Median Income bar
+# 1\. Median Income bar
+
 Data manip
-```{r}
+
+``` r
 A <- philly %>%
   drop_na(median_income)
 income_Philly <- A %>%
   group_by(county_name)%>%
   summarise(mean_inc = mean(median_income))%>%
-  mutate(deviation= mean_inc - 78030.84	)%>%
+  mutate(deviation= mean_inc - 78030.84 )%>%
   arrange(desc(mean_inc))
+```
 
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 B <- tx %>%
   drop_na(median_income)
 income_tx <- B %>%
@@ -141,7 +211,11 @@ income_tx <- B %>%
   summarise(mean_inc = mean(median_income))%>%
   mutate(deviation= mean_inc - 72739.39)%>%
   arrange(desc(mean_inc))
+```
 
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 C <- la %>%
   drop_na(median_income)
 income_la <- C %>%
@@ -149,7 +223,11 @@ income_la <- C %>%
   summarise(mean_inc = mean(median_income))%>%
   mutate(deviation= mean_inc - 74260.12)%>%
   arrange(desc(mean_inc))
+```
 
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 D <- ny %>%
   drop_na(median_income)
 income_ny <- D %>%
@@ -159,7 +237,9 @@ income_ny <- D %>%
   arrange(desc(mean_inc))
 ```
 
-```{r}
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 ggplot(income_Philly, aes(x = reorder(county_name, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
@@ -172,7 +252,11 @@ ggplot(income_Philly, aes(x = reorder(county_name, deviation), y = deviation,
     y = "Amount Difference"
   )+
   theme_bw()
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
 ggplot(income_tx, aes(x = reorder(county_name, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
@@ -185,7 +269,11 @@ ggplot(income_tx, aes(x = reorder(county_name, deviation), y = deviation,
     y = "Amount Difference"
   )+
   theme_bw()
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+
+``` r
 ggplot(income_la, aes(x = reorder(county_name, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
@@ -198,7 +286,11 @@ ggplot(income_la, aes(x = reorder(county_name, deviation), y = deviation,
     y = "Amount Difference"
   )+
   theme_bw()
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
+
+``` r
 ggplot(income_ny, aes(x = reorder(county_name, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
@@ -213,10 +305,13 @@ ggplot(income_ny, aes(x = reorder(county_name, deviation), y = deviation,
   theme_bw()
 ```
 
-# 2. AP course - family income
-data manip:
-phill
-```{r}
+![](Dec_6_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+
+# 2\. AP course - family income
+
+data manip: phill
+
+``` r
 ap_philly<- philly%>%
   filter(county_name== "Philadelphia")
 philly_wealthy <- ap_philly%>%
@@ -227,8 +322,10 @@ ap_sub_philly<- philly%>%
 sub_philly_wealthy <- ap_philly%>%
   filter(median_income>100000)
 ```
+
 la
-```{r}
+
+``` r
 ap_la<- la%>%
   filter(county_name== "Los Angeles")
 la_wealthy <- ap_la%>%
@@ -239,8 +336,10 @@ ap_sub_la<- la%>%
 sub_la_wealthy <- ap_la%>%
   filter(median_income>100000)
 ```
+
 houston
-```{r}
+
+``` r
 ap_hou<- tx%>%
   filter(county_name== "Harris (Houston)")
 hou_wealthy <- ap_hou%>%
@@ -251,8 +350,10 @@ ap_sub_hou<- tx%>%
 sub_hou_wealthy <- ap_hou%>%
   filter(median_income>90000)
 ```
+
 NY
-```{r}
+
+``` r
 ap_ny<- ny%>%
   filter(county_name== "Manhattan")
 ny_wealthy <- ap_ny%>%
@@ -279,16 +380,15 @@ q_ny_wealthy <- ap_ny%>%
   filter(median_income>100000)
 ```
 
+Graphs: Houston:
 
-Graphs:
-Houston:
-```{r}
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_hou)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = hou_wealthy)+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
-    subtitle="Philadelphia",
+    subtitle="Houston",
     x="Ratio",
     y="Frequency"
   )+
@@ -297,13 +397,17 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_hou)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_hou_wealthy)+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
-    subtitle="Suburbs of Philadelphia",
+    subtitle="Suburbs of Houston",
     x="Ratio",
     y="Frequency"
   )+
@@ -312,10 +416,14 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
-
 ```
-Philadelphia : 
-```{r}
+
+    ## Warning: Removed 8 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-10-2.png)<!-- --> Philadelphia
+:
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_philly)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = philly_wealthy)+
@@ -330,7 +438,13 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 12 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_philly)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_philly_wealthy)+
@@ -346,8 +460,12 @@ ggplot()+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
-LA: 
-```{r}
+
+    ## Warning: Removed 4 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-11-2.png)<!-- --> LA:
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = la_wealthy)+
@@ -362,7 +480,15 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 46 rows containing non-finite values (stat_density).
+
+    ## Warning: Removed 7 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_la_wealthy)+
@@ -378,8 +504,14 @@ ggplot()+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
-NYC:
-```{r}
+
+    ## Warning: Removed 20 rows containing non-finite values (stat_density).
+    
+    ## Warning: Removed 7 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-12-2.png)<!-- --> NYC:
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_q_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = q_ny_wealthy)+
@@ -394,7 +526,15 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 36 rows containing non-finite values (stat_density).
+
+    ## Warning: Removed 2 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_s_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = s_ny_wealthy)+
@@ -409,7 +549,15 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 4 rows containing non-finite values (stat_density).
+    
+    ## Warning: Removed 2 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = ny_wealthy)+
@@ -424,7 +572,15 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 12 rows containing non-finite values (stat_density).
+    
+    ## Warning: Removed 2 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-3.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_b_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = b_ny_wealthy)+
@@ -439,7 +595,15 @@ ggplot()+
             )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
+```
 
+    ## Warning: Removed 8 rows containing non-finite values (stat_density).
+    
+    ## Warning: Removed 2 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-4.png)<!-- -->
+
+``` r
 ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_k_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = k_ny_wealthy)+
@@ -456,8 +620,15 @@ ggplot()+
   theme(panel.grid.major.x=element_line())
 ```
 
-# 3. Grad Rates
-```{r}
+    ## Warning: Removed 16 rows containing non-finite values (stat_density).
+    
+    ## Warning: Removed 2 rows containing non-finite values (stat_density).
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-5.png)<!-- -->
+
+# 3\. Grad Rates
+
+``` r
 data1 <- df%>%
   mutate(county_name = case_when(county_code == "06111" ~ "Ventura, CA",
                                 county_code == "06059" ~ "Orange, CA",
@@ -484,48 +655,7 @@ data1 <- df%>%
   drop_na(county_name)
 ```
 
-```{r}
-data <-data1 %>% 
-  drop_na(hs_grads)
-
-#average grad rates in 2015
-grad_rates_15<- data %>%
-  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
-  filter(year == '2015')%>%
-  group_by(county_name,year)%>%
-  summarise(mean_grad_2015 = mean(hs_grads))
-
-#average grad rates in 2010
-grad_rates_10<- data %>%
-  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
-  filter(year == '2010')%>%
-  group_by(county_name,year)%>%
-  summarise(mean_grad_2010 = mean(hs_grads))
-
-grad_rate_CA <- inner_join(grad_rates_10, grad_rates_15, by= "county_name")%>%
-  select(county_name, year.x, year.y, mean_grad_2010, mean_grad_2015)%>%
-  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA"))
-```
-
-
-```{r}
-ggplot(grad_rate_CA, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010)) +
-  geom_dumbbell(col="olivedrab",
-                      size=0.75, 
-                      point.colour.l="black") +
-  #geom_line(arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
-  labs(title = "Change in high school graduation rate", 
-       x = "Percent Graduated",
-       y = "Region")+
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())+
-   scale_x_continuous(
-            breaks=seq(50, 100, 2),
-            labels = function(x){paste0(x*1, '%')})
-```
-
-
-```{r}
+``` r
 data <- data1 %>% 
   drop_na(hs_grads)
 
@@ -534,6 +664,11 @@ grad_rates_nyc<- data %>%
   filter(county_name %in% c("Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
+```
+
+    ## `summarise()` regrouping output by 'county_name' (override with `.groups` argument)
+
+``` r
 ny_rates_good <- grad_rates_nyc %>% 
   filter(county_name %in% c("Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY"))
 ny_rates_bad <-  grad_rates_nyc %>% 
@@ -544,6 +679,11 @@ grad_rates_la<- data %>%
   filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
+```
+
+    ## `summarise()` regrouping output by 'county_name' (override with `.groups` argument)
+
+``` r
 la_rates_good <- grad_rates_la %>% 
   filter(county_name %in% c("San Bernardino, CA"))
 la_rates_bad <-  grad_rates_la %>% 
@@ -551,28 +691,36 @@ la_rates_bad <-  grad_rates_la %>%
 
 #Hou
 grad_rates_hou<- data %>%
-  filter(county_name %in% c("Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Liberty, TX", "Waller, TX", "Waller, TX","Chambers, TX"))%>%
+  filter(county_name %in% c("Harris (Houston), TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Liberty, TX", "Waller, TX","Chambers, TX", "Brazoria, TX"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
+```
+
+    ## `summarise()` regrouping output by 'county_name' (override with `.groups` argument)
+
+``` r
 hou_rates_good <- grad_rates_hou %>% 
-  filter(county_name %in% c("Chambers, TX", "Fort Bend, TX", "Galveston, TX", "Liberty, TX" ,"Waller, TX"))
+  filter(county_name %in% c("Chambers, TX", "Fort Bend, TX", "Galveston, TX", "Liberty, TX" ,"Waller, TX", "Harris (Houston), TX"))
 hou_rates_bad <-  grad_rates_hou %>% 
-  filter(county_name %in% c("Montgomery, TX"))
+  filter(county_name %in% c("Montgomery, TX" , "Brazoria, TX"))
 
 #Philly
 grad_rates_philly<- data %>%
   filter(county_name %in% c("Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
+```
+
+    ## `summarise()` regrouping output by 'county_name' (override with `.groups` argument)
+
+``` r
 philly_rates_good <- grad_rates_philly %>% 
   filter(county_name %in% c("Chester, PA", "Delaware, PA", "Philadelphia, PA"))
 philly_rates_bad <-  grad_rates_philly %>% 
   filter(county_name %in% c("Bucks, PA", "Montomery, PA"))
 ```
 
-
-
-```{r}
+``` r
 ggplot() + 
   geom_point(data = grad_rates_nyc,aes(x = mean_grad, y = county_name, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = ny_rates_good, aes(x = mean_grad, y = county_name), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
@@ -587,7 +735,11 @@ ggplot() +
             breaks=seq(50, 100, 2),
             labels = function(x){paste0(x*1, '%')}
    )
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+``` r
 ggplot() + 
   geom_point(data = grad_rates_la,aes(x = mean_grad, y = county_name, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = la_rates_good, aes(x = mean_grad, y = county_name), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
@@ -602,7 +754,11 @@ ggplot() +
             breaks=seq(50, 100, 2),
             labels = function(x){paste0(x*1, '%')}
    )
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
+
+``` r
 ggplot() + 
   geom_point(data = grad_rates_hou,aes(x = mean_grad, y = county_name, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = hou_rates_good, aes(x = mean_grad, y = county_name), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
@@ -617,7 +773,11 @@ ggplot() +
             breaks=seq(50, 100, 2),
             labels = function(x){paste0(x*1, '%')}
    )
+```
 
+![](Dec_6_files/figure-gfm/unnamed-chunk-16-3.png)<!-- -->
+
+``` r
 ggplot() + 
   geom_point(data = grad_rates_philly,aes(x = mean_grad, y = county_name, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = philly_rates_good, aes(x = mean_grad, y = county_name), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
@@ -633,3 +793,5 @@ ggplot() +
             labels = function(x){paste0(x*1, '%')}
    )
 ```
+
+![](Dec_6_files/figure-gfm/unnamed-chunk-16-4.png)<!-- -->

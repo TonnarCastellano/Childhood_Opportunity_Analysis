@@ -13,7 +13,7 @@ data1
 ```
 
 ```{r}
-data <-Cities %>% 
+data <- Cities %>% 
   drop_na(hs_grads)
 #average grad rates in 2015
 grad_rates_nyc<- data %>%
@@ -21,8 +21,10 @@ grad_rates_nyc<- data %>%
   group_by(county_code,year)%>%
   summarise(mean_grad = mean(hs_grads))
 
-grad_rates_good <- grad_rates_nyc %>% filter(county_code %in% c("Manhattan", "Brooklyn",  "Queens", "Bronx"))
-grad_rates_bad <-  grad_rates_nyc %>% filter(county_code %in% c("Staten Island"))
+grad_rates_good <- grad_rates_nyc %>% 
+  filter(county_code %in% c("Manhattan", "Brooklyn",  "Queens", "Bronx"))
+grad_rates_bad <-  grad_rates_nyc %>% 
+  filter(county_code %in% c("Staten Island"))
 ```
 
 

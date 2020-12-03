@@ -152,7 +152,8 @@ la <- df%>%
   mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
                                 county_code == "06059" ~ "Orange",
                                 county_code == "06071" ~ "San Bernardino",
-                                county_code == "06037" ~ "Los Angeles"))%>%
+                                county_code == "06037" ~ "Los Angeles",
+                                county_code == "06029" ~ "Kern"))%>%
   drop_na(county_name )
 
 
@@ -168,7 +169,7 @@ philly <- df%>%
   mutate(county_name = case_when(county_code == "42101" ~ "Philadelphia", 
                                  county_code == "42045" ~ "Delaware", 
                                  county_code == "42029" ~ "Chester", 
-                                 county_code == "42091" ~ "Montomery",
+                                 county_code == "42091" ~ "Montgomery",
                                  county_code == "42017" ~ "Bucks"))%>%
   drop_na(county_name)
 
@@ -240,7 +241,7 @@ ggplot(income_Philly, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Philadelphia",
     subtitle="We can see how each city is above or below the state average, $78,030.84",
     x = "City",
     y = "Amount Difference"
@@ -257,7 +258,7 @@ ggplot(income_tx, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Houston",
     subtitle="We can see how each city is above or below the state average, $72,739.39",
     x = "City",
     y = "Amount Difference"
@@ -274,7 +275,7 @@ ggplot(income_la, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in Los Angeles",
     subtitle="We can see how each city is above or below the state average, $74,260.12",
     x = "City",
     y = "Amount Difference"
@@ -291,7 +292,7 @@ ggplot(income_ny, aes(x = reorder(county_name, deviation), y = deviation,
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household income",
+    title="Household income in New York",
     subtitle="We can see how each city is above or below the state average, $65,819.36",
     x = "City",
     y = "Amount Difference"
@@ -383,9 +384,12 @@ ggplot()+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Philadelphia",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.2)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -399,9 +403,12 @@ ggplot()+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Suburbs of Philadelphia",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+  scale_x_continuous(
+            breaks=seq(0, 2, 0.2)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -418,9 +425,12 @@ ggplot()+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Philadelphia",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -436,9 +446,12 @@ ggplot()+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Suburbs of Philadelphia",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.2)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -453,11 +466,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = la_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Los Angeles",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -473,16 +489,19 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_la)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_la_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th and 12th graders.",
     subtitle="Suburbs of Los Angeles",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
 
-    ## Warning: Removed 14 rows containing non-finite values (stat_density).
+    ## Warning: Removed 20 rows containing non-finite values (stat_density).
     
     ## Warning: Removed 7 rows containing non-finite values (stat_density).
 
@@ -494,11 +513,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_q_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = q_ny_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Queens",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -514,11 +536,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_s_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = s_ny_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Staten Island",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -534,11 +559,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = ny_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Manhattan",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -554,11 +582,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_b_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = b_ny_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Bronx",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -574,11 +605,14 @@ ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_k_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = k_ny_wealthy)+
   labs(
-    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Brookyn",
-    x="% in AP courses",
+    x="Ratio",
     y="Frequency"
   )+
+ scale_x_continuous(
+            breaks=seq(0, 2, 0.1)
+            )+ 
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -593,24 +627,24 @@ ggplot()+
 
 ``` r
 data1 <- df%>%
-  mutate(county_name = case_when(county_code == "06111" ~ "Ventura",
-                                county_code == "06059" ~ "Orange",
-                                county_code == "06071" ~ "San Bernardino",
-                                county_code == "06037" ~ "Los Angeles",
-                                county_code == "48201" ~ "Harris (Houston)", 
-                                county_code == "48157" ~ "Fort Bend", 
-                                county_code == "48339" ~ "Montgomery", 
-                                county_code == "48167" ~ "Galveston",
-                                county_code == "42101" ~ "Philadelphia", 
-                                county_code == "42045" ~ "Delaware", 
-                                county_code == "42029" ~ "Chester", 
-                                county_code == "42091" ~ "Montomery",
-                                county_code == "42017" ~ "Bucks",
-                                county_code == "36061" ~ "Manhattan", 
-                                county_code == "36047" ~ "Brooklyn", 
-                                county_code == "36081" ~ "Queens", 
-                                county_code == "36005" ~ "Bronx",
-                                county_code == "36085" ~ "Staten Island"))%>%
+  mutate(county_name = case_when(county_code == "06111" ~ "Ventura, CA",
+                                county_code == "06059" ~ "Orange, CA",
+                                county_code == "06071" ~ "San Bernardino, CA",
+                                county_code == "06037" ~ "Los Angeles, CA",
+                                county_code == "48201" ~ "Harris (Houston), TX", 
+                                county_code == "48157" ~ "Fort Bend, TX", 
+                                county_code == "48339" ~ "Montgomery, TX", 
+                                county_code == "48167" ~ "Galveston, TX",
+                                county_code == "42101" ~ "Philadelphia, PA", 
+                                county_code == "42045" ~ "Delaware, PA", 
+                                county_code == "42029" ~ "Chester, PA", 
+                                county_code == "42091" ~ "Montomery, PA",
+                                county_code == "42017" ~ "Bucks, PA",
+                                county_code == "36061" ~ "Manhattan, NY", 
+                                county_code == "36047" ~ "Brooklyn, NY", 
+                                county_code == "36081" ~ "Queens, NY", 
+                                county_code == "36005" ~ "Bronx, NY",
+                                county_code == "36085" ~ "Staten Island, NY"))%>%
   drop_na(county_name)
 data1
 ```
@@ -646,7 +680,7 @@ data <-data1 %>%
 
 #average grad rates in 2015
 grad_rates_15<- data %>%
-  filter(county_name %in% c("Ventura", "Orange", "Los Angeles", "San Bernardino", "Harris", "Fort Bend" , "Montgomery", "Galveston", "Philadelphia", "Delaware", "Chester",  "Montomery", "Bucks" ,"Manhattan", "Brooklyn",  "Queens", "Bronx", "Staten Island"))%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
   filter(year == '2015')%>%
   group_by(county_name,year)%>%
   summarise(mean_grad_2015 = mean(hs_grads))
@@ -657,7 +691,7 @@ grad_rates_15<- data %>%
 ``` r
 #average grad rates in 2010
 grad_rates_10<- data %>%
-  filter(county_name %in% c("Ventura", "Orange", "Los Angeles", "San Bernardino", "Harris", "Fort Bend" , "Montgomery", "Galveston", "Philadelphia", "Delaware", "Chester",  "Montomery", "Bucks" ,"Manhattan", "Brooklyn",  "Queens", "Bronx", "Staten Island"))%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Harris, TX", "Fort Bend, TX" , "Montgomery, TX", "Galveston, TX", "Philadelphia, PA", "Delaware, PA", "Chester, PA",  "Montomery, PA", "Bucks, PA" ,"Manhattan, NY", "Brooklyn, NY",  "Queens, NY", "Bronx, NY", "Staten Island, NY"))%>%
   filter(year == '2010')%>%
   group_by(county_name,year)%>%
   summarise(mean_grad_2010 = mean(hs_grads))
@@ -666,15 +700,17 @@ grad_rates_10<- data %>%
     ## `summarise()` regrouping output by 'county_name' (override with `.groups` argument)
 
 ``` r
-grad_rate <- inner_join(grad_rates_10, grad_rates_15, by= "county_name")%>%
-  select(county_name, year.x, year.y, mean_grad_2010, mean_grad_2015)
+grad_rate_CA <- inner_join(grad_rates_10, grad_rates_15, by= "county_name")%>%
+  select(county_name, year.x, year.y, mean_grad_2010, mean_grad_2015)%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA"))
 ```
 
 ``` r
-ggplot(grad_rate, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010)) + 
-        geom_dumbbell(color= "olivedrab", 
+ggplot(grad_rate_CA, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010)) +
+  geom_dumbbell(col="olivedrab",
                       size=0.75, 
                       point.colour.l="black") +
+  #geom_line(arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in high school graduation rate", 
        x = "Percent Graduated",
        y = "Region")+
@@ -682,8 +718,7 @@ ggplot(grad_rate, aes(y=county_name, x = mean_grad_2015, xend = mean_grad_2010))
   theme(panel.grid.major.x=element_line())+
    scale_x_continuous(
             breaks=seq(50, 100, 2),
-            labels = function(x){paste0(x*1, '%')}
-            )
+            labels = function(x){paste0(x*1, '%')})
 ```
 
     ## Warning: Ignoring unknown parameters: point.colour.l
