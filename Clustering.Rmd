@@ -5,7 +5,7 @@ title: "Clustering"
 ```{r}
 Cities <- data.table(Cities)
 clustering_df <- data.frame(Cities[, c(1:7) := NULL])
-clustering_df <- clustering_df %>% select(-stateusps,-population,-days_temp_above90)
+clustering_df <- clustering_df %>% select(county_code,AP_students,third_g_math,third_g_read,hs_grads,perc_over15_high_skill,college_deg,median_income,home_ownership,supermarket_nearby,green_spaces,walkability)
 ```
 
 
