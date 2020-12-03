@@ -7,12 +7,16 @@ title: "Data Cleaning"
 library(tidyverse)
 library(viridis)
 library(factoextra)
+library(data.table)
+library(ggradar)
 ```
 
 ## Basic importating
 ```{r message=FALSE, warning=FALSE}
 # Import data
-df<- read_csv("data.csv")
+
+df <- read_csv("/Users/tonnarcastellano/Desktop/R/Castellano_EDA20/eda20-team5-project/data.csv")
+
 ```
 
 ## Basic Exporlation
@@ -158,34 +162,6 @@ df <- df %>%
   mutate(county_code = replace(county_code,county_code == "06037", "Los Angeles"))%>%
   mutate(county_code = replace(county_code,county_code == "06029", "Kern"))%>%
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
-
-
-
-clustering <-
-  df %>% filter(
-    county_code == 'Manhattan'|
-    county_code == 'Brooklyn'|
-    county_code == 'Queens'|
-    county_code == 'Bronx'|
-    county_code == 'Staten Island'|
-    county_code == 'Bucks'|
-    county_code == 'Chester'|
-    county_code == 'Delaware'|
-    county_code == 'Montgomery'|
-    county_code == 'Philadelphia'|
-    county_code == 'Harris'|
-    county_code == 'Montgomery'|
-    county_code == 'Galveston'|
-    county_code == 'Brazoria'|
-    county_code == 'Liberty'|
-    county_code == 'Waller'|
-    county_code == 'Chambers'|
-    county_code == 'Venture'|
-    county_code == 'Orange'|
-    county_code == 'San Bernardino'|
-    county_code == 'Los Angeles'|
-    county_code == 'Kern'
-  ) %>% na.omit()
 ```
 
 
@@ -215,114 +191,7 @@ Cities <-
     county_code == 'San Bernardino'|
     county_code == 'Los Angeles'|
     county_code == 'Kern'
-  ) %>% 
-  select(third_g_math,third_g_read,county_code)
+  )
 
-NYC <-
-  df %>% filter(
-    county_code == 'Manhattan'|
-    county_code == 'Brooklyn'|
-    county_code == 'Queens'|
-    county_code == 'Bronx'|
-    county_code == 'Staten Island') %>% 
-  select(third_g_math,third_g_read,county_code)
-
-NYC %>% ggplot(aes(x = third_g_math,fill = county_code,alpha = .3)) +
-  geom_density()
-  
-
-```
-
-
-```{r}
-median_calculator <- function(df,column,n){
-  meds <- NA
-  for(i in 1:1000){
-  sample <- sample(column,n,replace = TRUE)
-  meds[i] <- median(sample)
-  }
-  meds
-}
-
-manhattan_math <- Cities %>% filter(county_code == 'Manhattan') %>% select(third_g_math)
-manhattan_math <- median_calculator(manhattan_math,manhattan_math$third_g_math,n = nrow(manhattan_math))
-manhattan_math <- data.frame(manhattan_math)
-manhattan_math['city'] <- 'Manhattan' 
-
-bronx_math <- Cities %>% filter(county_code == 'Bronx') %>% select(third_g_math)
-bronx_math <- median_calculator(bronx_math,bronx_math$third_g_math,n = nrow(bronx_math))
-bronx_math <- data.frame(bronx_math)
-bronx_math['city'] <- 'Bronx'
-
-staten_math <- Cities %>% filter(county_code == 'Staten Island') %>% select(third_g_math)
-staten_math <- median_calculator(staten_math,staten_math$third_g_math,n = nrow(staten_math))
-staten_math <- data.frame(staten_math)
-staten_math['city'] <- 'Staten Island'
-
-
-queens_math <- Cities %>% filter(county_code == 'Queens') %>% select(third_g_math)
-queens_math <- median_calculator(queens_math,queens_math$third_g_math,n = nrow(queens_math))
-queens_math <- data.frame(queens_math)
-queens_math['city'] <- 'Queens'
-
-brooklyn_math <- Cities %>% filter(county_code == 'Brooklyn') %>% select(third_g_math)
-brooklyn_math <- median_calculator(brooklyn_math,brooklyn_math$third_g_math,n = nrow(brooklyn_math))
-brooklyn_math <- data.frame(brooklyn_math)
-brooklyn_math['city'] <- 'Brooklyn'
-
-manhattan_read <- Cities %>% filter(county_code == 'Manhattan') %>% select(third_g_read)
-manhattan_read <- median_calculator(manhattan_read,manhattan_read$third_g_read,n = nrow(manhattan_read))
-manhattan_read <- data.frame(manhattan_read)
-manhattan_read['city'] <- 'Manhattan' 
-
-bronx_read <- Cities %>% filter(county_code == 'Bronx') %>% select(third_g_read)
-bronx_read <- median_calculator(bronx_read,bronx_read$third_g_read,n = nrow(bronx_read))
-bronx_read <- data.frame(bronx_read)
-bronx_read['city'] <- 'Bronx'
-
-staten_read <- Cities %>% filter(county_code == 'Staten Island') %>% select(third_g_read)
-staten_read <- median_calculator(staten_read,staten_read$third_g_read,n = nrow(staten_read))
-staten_read <- data.frame(staten_read)
-staten_read['city'] <- 'Staten Island'
-
-
-queens_read <- Cities %>% filter(county_code == 'Queens') %>% select(third_g_read)
-queens_read <- median_calculator(queens_read,queens_read$third_g_read,n = nrow(queens_read))
-queens_read <- data.frame(queens_read)
-queens_read['city'] <- 'Queens'
-
-brooklyn_read <- Cities %>% filter(county_code == 'Brooklyn') %>% select(third_g_read)
-brooklyn_read <- median_calculator(brooklyn_read,brooklyn_read$third_g_read,n = nrow(brooklyn_read))
-brooklyn_read <- data.frame(brooklyn_read)
-brooklyn_read['city'] <- 'Brooklyn'
-```
-
-
-```{r}
-ggplot()+
-  geom_density(data = manhattan_math, aes(x = manhattan_math),alpha = .5, fill = 'red')+
-  geom_density(data = queens_math, aes(x = queens_math), alpha = .5, fill = 'blue')+
-  geom_density(data = brooklyn_math, aes(x = brooklyn_math), alpha = .5, fill = 'green')+
-  geom_density(data = bronx_math, aes(x = bronx_math), alpha = .5, fill = 'purple')+
-  geom_density(data = staten_math, aes(x = staten_math), alpha = .5, fill = 'yellow')+
-  labs(
-    x = 'Math Score',
-    y = 'Density', 
-    title = 'Median Math Scores',
-    subtitle = 'Bootstrapped Sample'
-    )
-
-ggplot()+
-  geom_density(data = manhattan_read, aes(x = manhattan_read),alpha = .5, fill = 'red')+
-  geom_density(data = queens_read, aes(x = queens_read), alpha = .5, fill = 'blue')+
-  geom_density(data = brooklyn_read, aes(x = brooklyn_read), alpha = .5, fill = 'green')+
-  geom_density(data = bronx_read, aes(x = bronx_read), alpha = .5, fill = 'purple')+
-  geom_density(data = staten_read, aes(x = staten_read), alpha = .5, fill = 'yellow')+
-  labs(
-    x = 'read Score',
-    y = 'Density', 
-    title = 'Median read Scores',
-    subtitle = 'Bootstrapped Sample'
-    )
 ```
 

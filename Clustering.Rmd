@@ -1,0 +1,66 @@
+---
+title: "Clustering"
+---
+
+```{r}
+Cities <- data.table(Cities)
+clustering_df <- data.frame(Cities[, c(1:7) := NULL])
+clustering_df <- clustering_df %>% select(-stateusps,-population,-days_temp_above90)
+```
+
+
+```{r}
+clustering_df <- aggregate( .~ county_code, data = clustering_df, FUN = mean)
+```
+
+
+```{r}
+county_code <- clustering_df %>% select(county_code)
+clustering_df <- clustering_df %>% select(-county_code)
+```
+
+
+```{r}
+fviz_nbclust(x = clustering_df, FUNcluster = kmeans, 'wss')
+
+k_means <- kmeans(clustering_df,3,25)
+```
+
+
+```{r}
+cluster <- k_means$cluster
+df_graph <- cbind(county_code, clustering_df)
+df_graph <- cbind(cluster, df_graph)
+```
+
+
+```{r}
+fviz_cluster(k_means, data = clustering_df, geom = "point") + 
+  theme_minimal() + 
+  theme(text = element_text(color = "black")) + 
+  ggtitle("") + 
+  theme(text = element_text (color = "black")) + 
+  theme_bw() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  geom_label_repel(aes(label = df_graph$county_code)) + 
+  theme(legend.position = "none")
+
+```
+
+
+```{r}
+ggRadar(df_graph, aes(group = cluster), 
+             rescale = FALSE,
+             size = 1, 
+             interactive = FALSE, 
+             use.label = TRUE) +
+  scale_y_discrete(breaks = NULL) + # don't show ticks 
+  theme(axis.text.x = element_text(size = 20),legend.position="right") + 
+  theme_minimal() + 
+  theme(text = element_text(color = "black"),
+        plot.title = element_text(size = 40)) + 
+  ggtitle("Happiness radar plot")
+```
+
