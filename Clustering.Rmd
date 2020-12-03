@@ -5,7 +5,10 @@ title: "Clustering"
 ```{r}
 Cities <- data.table(Cities)
 clustering_df <- data.frame(Cities[, c(1:7) := NULL])
+#variables in the graphs
 clustering_df <- clustering_df %>% select(county_code,AP_students,third_g_math,third_g_read,hs_grads,perc_over15_high_skill,college_deg,median_income,home_ownership,supermarket_nearby,green_spaces,walkability)
+#all non irrelevant variables
+"clustering_df <- clustering_df %>% select(-stateusps,-population,-days_temp_above90)"
 ```
 
 
