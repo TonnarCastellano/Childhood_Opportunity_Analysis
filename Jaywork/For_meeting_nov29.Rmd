@@ -97,11 +97,8 @@ tx <- df%>%
   mutate(county_name = case_when(county_code == "48201" ~ "Harris", 
                                  county_code == "48157" ~ "Fort Bend", 
                                  county_code == "48339" ~ "Montgomery", 
-                                 county_code == "48167" ~ "Galveston", 
-                                 county_code == "48039" ~ "Brazoria", 
                                  county_code == "48291" ~ "Liberty", 
-                                 county_code == "48473" ~ "Waller", 
-                                 county_code == "48071" ~ "Chambers"))%>%
+                                 county_code == "48473" ~ "Waller"))%>%
   drop_na(county_name)
 
 
@@ -211,6 +208,7 @@ ggplot(income_ny, aes(x = reorder(county_name, deviation), y = deviation,
     y = "Amount Difference"
   )+
   theme_bw()
+  #scale_y_discrete(labels = function(y){paste0("$", y/1000, "K")})
 ```
 
 # 2. AP course - family income
@@ -258,24 +256,9 @@ ap_ny<- ny%>%
 ny_wealthy <- ap_ny%>%
   filter(median_income>100000)
 
-ap_b_ny<- ny%>%
-  filter(county_name == "Bronx")
-b_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_k_ny<- ny%>%
-  filter(county_name == "Brooklyn")
-k_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_s_ny<- ny%>%
-  filter(county_name == "Staten Island")
-s_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_q_ny<- ny%>%
-  filter(county_name == "Queens")
-q_ny_wealthy <- ap_ny%>%
+ap_sub_ny<- ny%>%
+  filter(county_name != "Manhattan")
+sub_ap_wealthy <- ap_ny%>%
   filter(median_income>100000)
 ```
 
@@ -381,26 +364,11 @@ ggplot()+
 NYC:
 ```{r}
 ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_q_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = q_ny_wealthy)+
+  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_ny)+
+  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_ap_wealthy)+
   labs(
     title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
-    subtitle="Queens",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-
-ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_s_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = s_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
-    subtitle="Staten Island",
+    subtitle="Suburbs of New York",
     x="Ratio",
     y="Frequency"
   )+
@@ -425,35 +393,6 @@ ggplot()+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 
-ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_b_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = b_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
-    subtitle="Bronx",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-
-ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_k_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = k_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
-    subtitle="Brookyn",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
 ```
 
 # 3. Grad Rates
