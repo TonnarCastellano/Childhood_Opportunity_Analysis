@@ -5,13 +5,13 @@ output: github_document
 pdf_document: default
 ---
 # Necessary Libraries
-
+ 
 ```{r}
 library(tidyverse)
 library(viridis)
 # Import data
 library(readr)
-df <- read_csv("/Users/jaykim/Documents/EDA/eda20-team5-project/Jay's work/data.csv")# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
+df <- read_csv("/Users/jaykim/Documents/EDA/eda20-team5-project/Jaywork/data.csv")# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
 df <- df %>% 
   separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
 

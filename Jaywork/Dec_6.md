@@ -28,7 +28,7 @@ library(viridis)
 ``` r
 # Import data
 library(readr)
-df <- read_csv("/Users/jaykim/Documents/EDA/eda20-team5-project/Jay's work/data.csv")# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
+df <- read_csv("/Users/jaykim/Documents/EDA/eda20-team5-project/Jaywork/data.csv")# Separate the column "msaname15" into "city", "state", "size" and "no_mean"
 ```
 
     ## Parsed with column specification:
