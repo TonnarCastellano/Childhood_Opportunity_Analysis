@@ -6,7 +6,7 @@ title: "Clustering"
 Cities <- data.table(Cities)
 clustering_df <- data.frame(Cities[, c(1:7) := NULL])
 #variables in the graphs
-clustering_df <- clustering_df %>% select(county_code,AP_students,third_g_math,third_g_read,hs_grads,perc_over15_high_skill,college_deg,median_income,home_ownership,supermarket_nearby,green_spaces,walkability)
+clustering_df <- clustering_df %>%  select(county_code,AP_students,third_g_math,third_g_read,hs_grads,perc_over15_high_skill,college_deg,median_income,home_ownership,supermarket_nearby,green_spaces,walkability)
 #all non irrelevant variables
 "clustering_df <- clustering_df %>% select(-stateusps,-population,-days_temp_above90)"
 ```
@@ -20,12 +20,11 @@ clustering_df <- aggregate( .~ county_code, data = clustering_df, FUN = mean)
 ```{r}
 county_code <- clustering_df %>% select(county_code)
 clustering_df <- clustering_df %>% select(-county_code)
+clustering_df <- scale(clustering_df)
 ```
 
 
 ```{r}
-fviz_nbclust(x = clustering_df, FUNcluster = kmeans, 'wss')
-
 k_means <- kmeans(clustering_df,3,25)
 ```
 

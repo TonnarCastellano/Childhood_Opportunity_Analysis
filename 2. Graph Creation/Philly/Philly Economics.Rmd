@@ -1,0 +1,40 @@
+ College Degree vs Income
+
+## Graphs
+```{r}
+library(viridis)
+```
+
+
+```{r}
+df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+  ggplot( aes(x = college_deg, y = median_income))+
+  geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  labs(
+    title = 'Median Income vs College Degree in Philadelphia',
+    x = 'College Degree',
+    y = 'Median Income',
+    color = 'City and Suburb'
+  )+
+  theme_classic()
+```
+
+# High Skill vs Income
+
+## Graphs
+```{r}
+df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+  ggplot( aes(x = perc_over15_high_skill, y = median_income))+
+  geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  labs(
+    title = 'Median Income vs Skilled Labor in Philadelphia',
+    x = 'Skilled Labor',
+    y = 'Median Income',
+    color = 'City and Suburb'
+  )+
+  theme_classic()
+```

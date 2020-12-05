@@ -1,0 +1,18 @@
+---
+title: "Philly Data Cleaning"
+---
+
+```{r}
+df_philly <- Cities %>% filter(stateusps == 'PA')
+```
+
+
+```{r}
+df_philly <- df_philly %>% mutate(group = ifelse(county_code == "Philly", "city", "suburb")) %>%
+  select(group, everything())
+```
+
+
+```{r}
+df_philly <- df_philly %>% filter(year == "2015")
+```

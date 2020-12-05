@@ -9,6 +9,9 @@ library(viridis)
 library(factoextra)
 library(data.table)
 library(ggradar)
+library(ggiraphExtra)
+library(ggrepel)
+options(scipen = 999)
 ```
 
 ## Basic importating
@@ -165,7 +168,6 @@ df <- df %>%
 ```
 
 
-
 ```{r}
 Cities <-
   df %>% filter(
@@ -191,7 +193,6 @@ Cities <-
     county_code == 'San Bernardino'|
     county_code == 'Los Angeles'|
     county_code == 'Kern'
-  )
+  ) %>% na.omit()
 
 ```
-
