@@ -356,24 +356,9 @@ ap_ny<- ny%>%
 ny_wealthy <- ap_ny%>%
   filter(median_income>100000)
 
-ap_b_ny<- ny%>%
-  filter(county_name == "Bronx")
-b_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_k_ny<- ny%>%
-  filter(county_name == "Brooklyn")
-k_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_s_ny<- ny%>%
-  filter(county_name == "Staten Island")
-s_ny_wealthy <- ap_ny%>%
-  filter(median_income>100000)
-
-ap_q_ny<- ny%>%
-  filter(county_name == "Queens")
-q_ny_wealthy <- ap_ny%>%
+ap_sub_ny<- ny%>%
+  filter(county_name != "Manhattan")
+sub_ap_wealthy <- ap_ny%>%
   filter(median_income>100000)
 ```
 
@@ -508,11 +493,11 @@ ggplot()+
 
 ``` r
 ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_q_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = q_ny_wealthy)+
+  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_ny)+
+  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_ap_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
-    subtitle="Queens",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
+    subtitle="Suburbs of New York",
     x="Ratio",
     y="Frequency"
   )+
@@ -523,7 +508,7 @@ ggplot()+
   theme(panel.grid.major.x=element_line())
 ```
 
-    ## Warning: Removed 36 rows containing non-finite values (stat_density).
+    ## Warning: Removed 64 rows containing non-finite values (stat_density).
 
     ## Warning: Removed 2 rows containing non-finite values (stat_density).
 
@@ -531,33 +516,10 @@ ggplot()+
 
 ``` r
 ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_s_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = s_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
-    subtitle="Staten Island",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-```
-
-    ## Warning: Removed 4 rows containing non-finite values (stat_density).
-    
-    ## Warning: Removed 2 rows containing non-finite values (stat_density).
-
-![](Dec_6_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
-
-``` r
-ggplot()+
   geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_ny)+
   geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = ny_wealthy)+
   labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
+    title="Ratio of students in at least one AP course to the number of 11th/12th graders.",
     subtitle="Manhattan",
     x="Ratio",
     y="Frequency"
@@ -573,53 +535,7 @@ ggplot()+
     
     ## Warning: Removed 2 rows containing non-finite values (stat_density).
 
-![](Dec_6_files/figure-gfm/unnamed-chunk-13-3.png)<!-- -->
-
-``` r
-ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_b_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = b_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
-    subtitle="Bronx",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-```
-
-    ## Warning: Removed 8 rows containing non-finite values (stat_density).
-    
-    ## Warning: Removed 2 rows containing non-finite values (stat_density).
-
-![](Dec_6_files/figure-gfm/unnamed-chunk-13-4.png)<!-- -->
-
-``` r
-ggplot()+
-  geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_k_ny)+
-  geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = k_ny_wealthy)+
-  labs(
-    title="Ratio of students in at least one AP course to the number of 11th/12th graders",
-    subtitle="Brookyn",
-    x="Ratio",
-    y="Frequency"
-  )+
- scale_x_continuous(
-            breaks=seq(0, 2, 0.1)
-            )+ 
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-```
-
-    ## Warning: Removed 16 rows containing non-finite values (stat_density).
-    
-    ## Warning: Removed 2 rows containing non-finite values (stat_density).
-
-![](Dec_6_files/figure-gfm/unnamed-chunk-13-5.png)<!-- -->
+![](Dec_6_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
 
 # 3\. Grad Rates
 
@@ -629,6 +545,7 @@ data1 <- df%>%
                                 county_code == "06059" ~ "Orange, CA",
                                 county_code == "06071" ~ "San Bernardino, CA",
                                 county_code == "06037" ~ "Los Angeles, CA",
+                                county_code == "06029" ~ "Kern, CA",
                                 county_code == "48201" ~ "Harris (Houston), TX", 
                                 county_code == "48157" ~ "Fort Bend, TX", 
                                 county_code == "48339" ~ "Montgomery, TX", 
@@ -668,7 +585,7 @@ ny_rates_bad <-  grad_rates_nyc %>%
 
 #LA
 grad_rates_la<- data %>%
-  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA"))%>%
+  filter(county_name %in% c("Ventura, CA", "Orange, CA", "Los Angeles, CA", "San Bernardino, CA", "Kern, CA"))%>%
   group_by(county_name,year)%>%
   summarise(mean_grad = mean(hs_grads))
 ```
@@ -677,7 +594,7 @@ grad_rates_la<- data %>%
 
 ``` r
 la_rates_good <- grad_rates_la %>% 
-  filter(county_name %in% c("San Bernardino, CA"))
+  filter(county_name %in% c("San Bernardino, CA", "Kern, CA"))
 la_rates_bad <-  grad_rates_la %>% 
   filter(county_name %in% c("Los Angeles, CA", "Orange, CA","Ventura, CA" ))
 
