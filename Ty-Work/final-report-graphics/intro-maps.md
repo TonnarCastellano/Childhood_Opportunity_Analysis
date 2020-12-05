@@ -11,8 +11,8 @@ library(tidyverse)
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
-    ## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
-    ## ✓ readr   1.3.1     ✓ forcats 0.5.0
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.4.0     ✓ forcats 0.5.0
 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
@@ -165,7 +165,7 @@ la_map
 
 ``` r
 houston_map <- us_counties %>% filter(region == "texas") %>%
-  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "galveston", "montgomery", "brazoria", "chambers", "waller", "liberty"), "y", "n")) %>% 
+  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "montgomery", "waller", "liberty"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
