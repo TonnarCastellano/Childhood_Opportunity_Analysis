@@ -55,17 +55,15 @@ ggplot() +
 
 ## Data Collection
 ```{r}
-ap_la<- df_philly %>%
-  filter(county_code== "Philadelphia")
-philly_wealthy <- ap_la%>%
-  filter(median_income > income$mean)
+ap_philly<- df_philly %>%
+  filter(county_code == "Philadelphia" & median_income < income$mean)
+philly_wealthy <- df_philly %>%
+  filter(county_code== "Philadelphia" & median_income > income$mean)
 
-ap_sub_la<- df_philly %>%
-  filter(county_code != "Philadelphia")
-sub_philly_wealthy <- ap_la%>%
-  filter(median_income > income$mean)
-
-print(income$mean)
+ap_sub_philly<- df_philly %>%
+  filter(county_code !="Philadelphia" & median_income < income$mean)
+sub_philly_wealthy <- df_philly %>%
+  filter(county_code != "Philadelphia" & median_income > income$mean)
 ```
 
 ##  Graphs

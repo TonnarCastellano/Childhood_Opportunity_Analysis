@@ -1,5 +1,0 @@
-"0","ap_hou<- df_tx %>%"
-"0","  filter(county_code== ""Harris"" & median_income < income$mean)"
-"2","Error in df_tx %>% filter(county_code == ""Harris"" & median_income < income$mean) : 
-  could not find function ""%>%""
-"
