@@ -1,0 +1,104 @@
+---
+title: "Texas Education"
+---
+
+# Third Grade Reading Scores
+
+## Graphs
+```{r}
+df_tx_2015 %>% 
+  mutate(Area = ifelse(county_code == "Harris", "City", "Suburb")) %>% 
+  ggplot(aes(x = county_code, y = third_g_math + third_g_read, fill = Area, alpha = Area)) +
+  geom_boxplot() +
+  geom_hline(data = df_tx_2015, aes(yintercept = mean(third_g_read, na.rm = TRUE) + mean(third_g_math, na.rm = TRUE)), col = "red",linetype='dotted') + 
+  scale_fill_manual(values = c("#69b3a2", "grey")) +
+  scale_alpha_manual(values=c(1,0.1)) +
+  theme_classic() +
+  labs(title = "2015 Houston 3rd Grades Read and Math scores by County", subtitle = "The red lines show U.S nation's average", x = "County", y = "3rd Grades Reading & Math score")
+```
+
+----
+# Highschool Graduation Rates 
+
+## Data Collection
+```{r}
+data <-Cities %>% 
+  drop_na(hs_grads)
+#average grad rates in 2015
+grad_rates_tx <- data %>%
+  filter(county_code %in% c("Harris", "Fort Bend", "Montgomery", "Waller", "Liberty"))%>%
+  group_by(county_code,year)%>%
+  summarise(mean_grad = mean(hs_grads))
+
+grad_rates_good <- grad_rates_tx %>% filter(county_code %in% c("Harris", "Fort Bend", "Waller", "Liberty"))
+grad_rates_bad <-  grad_rates_tx %>% filter(county_code %in% c("Montgomery"))
+```
+
+```{r}
+ggplot() + 
+  geom_point(data = grad_rates_tx,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
+  geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
+  geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
+  labs(title = "Change in high school graduation rate", 
+       x = "Percent Graduated",
+       y = "Region")+
+  theme_classic()+
+  theme(panel.grid.major.x=element_line())+
+   scale_x_continuous(
+            breaks=seq(50, 100, 2),
+            labels = function(x){paste0(x*1, '%')}
+            )
+```
+
+----
+# AP Classes 
+
+## Data Collection
+```{r}
+ap_hou<- df_tx %>%
+  filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+  filter(median_income > income$mean)
+
+ap_sub_hou<- df_tx %>%
+  filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+  filter(median_income > income$mean)
+
+print(income$mean)
+```
+
+##  Graphs
+```{r}
+
+colors <- c("More than $66K" = "light blue", "Less than $66K" = "pink")
+
+ggplot()+
+  geom_density(aes(AP_students, fill= "Less than $66K"), alpha = .2, data = ap_hou)+
+  geom_density(aes(AP_students, fill= "More than $66K"), alpha = .2,  data = hou_wealthy)+
+  labs(
+    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    subtitle="Houston",
+    x="Ratio of Upper Level Students in AP Courses",
+    y="Frequency",
+    color = colors,
+    fill = 'AP Students'
+  )+
+  theme_classic()+
+  theme(panel.grid.major.x=element_line())
+
+ggplot()+
+  geom_density(aes(AP_students, fill="Less than $66K"), alpha = .2, data = ap_sub_hou)+
+  geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_hou_wealthy)+
+  labs(
+    title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+    subtitle="Suburban Areas",
+    x="Ratio of Upper Level Students in AP Courses",
+    y="Frequency",
+    color = colors,
+    fill = 'AP Students'
+  )+
+  theme_classic()+
+  theme(panel.grid.major.x=element_line())
+```
+

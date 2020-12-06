@@ -1,0 +1,3 @@
+"0","df_tx$county_code = factor(df_tx$county_code, levels = c(""Manhattan"", ""Bronx"", ""Queens"", ""Brooklyn"", ""Staten Island""))"
+"0",""
+"0","df_nyc_2015 <- df_nyc %>% filter(year == ""2015"")"

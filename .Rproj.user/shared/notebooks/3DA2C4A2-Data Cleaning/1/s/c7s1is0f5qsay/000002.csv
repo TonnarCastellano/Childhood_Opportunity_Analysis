@@ -1,0 +1,1 @@
+"0","df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)"

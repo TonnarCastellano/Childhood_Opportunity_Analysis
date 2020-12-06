@@ -1,0 +1,2 @@
+"0","df_philly <- df_philly %>% mutate(group = ifelse(county_code == ""Philly"", ""city"", ""suburb"")) %>%"
+"0","  select(group, everything())"

@@ -1,0 +1,3 @@
+"0","# Separate the column ""msaname15"" into ""city"", ""state"", ""size"" and ""no_mean"""
+"0","df <- df %>% "
+"0","  separate(msaname15, c(""city"", ""state"", ""size"", ""no_mean""), sep = "" "")"

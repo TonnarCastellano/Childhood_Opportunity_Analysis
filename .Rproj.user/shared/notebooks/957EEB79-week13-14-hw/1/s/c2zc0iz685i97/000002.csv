@@ -1,0 +1,2 @@
+"0","packages <- c(""tidyverse"", ""stats"", ""factoextra"", ""janitor"", ""ggiraphExtra"", ""ggrepel"", ""MuMIn"", ""gridExtra"")"
+"0","invisible(lapply(packages, library, character.only = TRUE))"

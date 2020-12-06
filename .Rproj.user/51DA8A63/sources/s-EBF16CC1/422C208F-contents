@@ -1,0 +1,512 @@
+rename(green_spaces = HE_GREEN) %>%
+rename(days_temp_above90 = HE_HEAT) %>%
+rename(phealth_insurance = HE_HLTHINS) %>%
+rename(mean_ozone_amount = HE_OZONE) %>%
+rename(mean_microparticle = HE_PM25) %>%
+rename(housing_vacancy = HE_VACANCY) %>%
+rename(walkability = HE_WALK) %>%
+rename(below100_poverty = SE_POVRATE) %>%
+rename(public_assistance = SE_PUBLIC) %>%
+rename(home_ownership = SE_HOME) %>%
+rename(perc_over15_high_skill = SE_OCC) %>%
+rename(median_income=SE_MHE) %>%
+rename(employment_rate = SE_EMPRAT) %>%
+rename(commute_over1hour = SE_JOBPROX) %>%
+rename(single_parents = SE_SINGLE)
+df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)
+head(df)
+extra_NA<- df %>%
+select_if(function(x) any(is.na(x))) %>%
+summarise_each(funs(sum(is.na(.))))
+extra_NA
+NA_subset <- df[rowSums(is.na(df)) > 0, ]
+NA_subset
+# Delete some rows having more NAs than meaningful values.
+df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
+View(df)
+df <- df %>%
+#NYC
+mutate(county_code = replace(county_code, county_code == '36061', 'Manhattan')) %>%
+mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%
+mutate(county_code = replace(county_code, county_code == '36081', 'Queens')) %>%
+mutate(county_code = replace(county_code, county_code == '36005', 'Bronx')) %>%
+mutate(county_code = replace(county_code, county_code == '36085', 'Staten Island'))%>%
+#Philly
+mutate(county_code = replace(county_code, county_code == '42017', 'Bucks')) %>%
+mutate(county_code = replace(county_code, county_code == '42029', 'Chester')) %>%
+mutate(county_code = replace(county_code, county_code == '42045', 'Delaware')) %>%
+mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery')) %>%
+mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia')) %>%
+#Houston
+mutate(county_code = replace(county_code, county_code == "48201", "Harris")) %>%
+mutate(county_code = replace(county_code, county_code == "48157", "Fort Bend")) %>%
+mutate(county_code = replace(county_code, county_code == "48339", "Montgomery")) %>%
+mutate(county_code = replace(county_code, county_code == "48167", "Galveston")) %>%
+mutate(county_code = replace(county_code, county_code == "48039", "Brazoria")) %>%
+mutate(county_code = replace(county_code, county_code == "48291", "Liberty")) %>%
+mutate(county_code = replace(county_code, county_code == "48473", "Waller")) %>%
+mutate(county_code = replace(county_code, county_code == "48071", "Chambers"))%>%
+#LA
+mutate(county_code = replace(county_code,county_code == "06111", "Ventura")) %>%
+mutate(county_code = replace(county_code, county_code == "06059","Orange"))%>%
+mutate(county_code = replace(county_code, county_code == "06071","San Bernardino"))%>%
+mutate(county_code = replace(county_code,county_code == "06037", "Los Angeles"))%>%
+mutate(county_code = replace(county_code,county_code == "06029", "Kern"))%>%
+mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+Cities <-
+df %>% filter(
+county_code == 'Manhattan'|
+county_code == 'Brooklyn'|
+county_code == 'Queens'|
+county_code == 'Bronx'|
+county_code == 'Staten Island'|
+county_code == 'Bucks'|
+county_code == 'Chester'|
+county_code == 'Delaware'|
+county_code == 'Montgomery'|
+county_code == 'Philadelphia'|
+county_code == 'Harris'|
+county_code == 'Montgomery'|
+county_code == 'Galveston'|
+county_code == 'Brazoria'|
+county_code == 'Liberty'|
+county_code == 'Waller'|
+county_code == 'Chambers'|
+county_code == 'Venture'|
+county_code == 'Orange'|
+county_code == 'San Bernardino'|
+county_code == 'Los Angeles'|
+county_code == 'Kern'
+) %>% na.omit()
+df_la <- Cities %>% filter(stateusps == 'CA')
+df_la <- df_la %>% mutate(group = ifelse(county_code == "LA", "city", "suburb")) %>%
+select(group, everything())
+df_la_2015 <- df_la %>% filter(year == "2015")
+df_tx <- Cities %>% filter(stateusps == 'TX') %>% filter(county_code == "Harris" | county_code == "Fort Bend"| county_code == "Montgomery"| county_code == "Liberty"| county_code == "Waller")
+df_tx <- df_tx %>% mutate(group = ifelse(county_code == "Harris", "city", "suburb")) %>%
+select(group, everything())
+df_tx$county_code = factor(df_tx$county_code, levels = c("Harris", "Fort Bend", "Montgomery", "Waller", "Liberty"))
+df_tx_2010 <- df_tx %>% filter(year == "2010")
+df_tx_2015 <- df_tx %>% filter(year == "2015")
+ap_hou<- df_tx %>%
+filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+filter(median_income>90000)
+ap_sub_hou<- df_tx %>%
+filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+filter(median_income>90000)
+ggplot()+
+geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_hou)+
+geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="% in AP courses",
+y="Frequency",
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_hou)+
+geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburbs of Houston",
+x="% in AP courses",
+y="Frequency"
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_hou)+
+geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="% in AP courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students), alpha = .2, fill="Poor", data = ap_hou)+
+geom_density(aes(AP_students), alpha = .2, fill="Wealthy",  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="% in AP courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students, alpha = .2, fill="Poor"), data = ap_hou)+
+geom_density(aes(AP_students, alpha = .2, fill="Wealthy"),  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="% in AP courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students), alpha = .2, fill="pink", data = ap_sub_hou)+
+geom_density(aes(AP_students), alpha = .2, fill="lightblue",  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburbs of Houston",
+x="% in AP courses",
+y="Frequency"
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="% in AP courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level tudents in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level tudents in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "Poor" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+income <-Cities %>% select(median_income) %>% summarise(mean = mean(median_income))
+print(income$mean)
+ap_hou<- df_tx %>%
+filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+filter(median_income>income)
+ap_sub_hou<- df_tx %>%
+filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+filter(median_income>income)
+colors <- c("Wealthy" = "light blue", "<$100K" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("Wealthy" = "light blue", "<$100K" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+View(income)
+ap_hou<- df_tx %>%
+filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+ap_sub_hou<- df_tx %>%
+filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+colors <- c("Wealthy" = "light blue", "<$100K" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+print(income$mean)
+ap_hou<- df_tx %>%
+filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+ap_sub_hou<- df_tx %>%
+filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+print(income$mean)
+colors <- c("Wealthy" = ">$66122.79", "<$66122.79 " = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c(">$66122.79" = "light blue", "<$66122.79 " = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Poor"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="Wealthy"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ap_hou<- df_tx %>%
+filter(county_code== "Harris")
+hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+ap_sub_hou<- df_tx %>%
+filter(county_code != "Harris")
+sub_hou_wealthy <- ap_hou%>%
+filter(median_income > income$mean)
+print(income$mean)
+colors <- c(">$66122.79" = "light blue", "<$66122.79" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill= "<$66122.79"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill= ">$66122.79"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill=">$66122.79"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="<$66122.79"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+colors <- c("More than $66K" = "light blue", "Less than $66K" = "pink")
+ggplot()+
+geom_density(aes(AP_students, fill= "Less than $66K"), alpha = .2, data = ap_hou)+
+geom_density(aes(AP_students, fill= "More than $66K"), alpha = .2,  data = hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Houston",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+ggplot()+
+geom_density(aes(AP_students, fill="Less than $66K"), alpha = .2, data = ap_sub_hou)+
+geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_hou_wealthy)+
+labs(
+title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
+subtitle="Suburban Areas",
+x="Ratio of Upper Level Students in AP Courses",
+y="Frequency",
+color = colors,
+fill = 'AP Students'
+)+
+theme_classic()+
+theme(panel.grid.major.x=element_line())
+df_nyc <- Cities %>% filter(stateusps == 'NY')
+df_tx <- df_tx %>% mutate(group = ifelse(county_code == "NYC", "Manhattan", "Outter Boroughs")) %>%
+select(group, everything())
+df_tx$county_code = factor(df_tx$county_code, levels = c("Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island"))
+df_nyc_2015 <- df_nyc %>% filter(year == "2015")
+library(viridis)
+df_nyc %>% mutate(City_Outter_Boroughs = ifelse(county_code == 'Manhattan','City','Outter Boroughs')) %>%
+ggplot( aes(x = college_deg, y = median_income))+
+geom_point(aes(color = City_Outter_Boroughs), alpha = .5, size = 2)+
+scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+scale_x_continuous(labels = function(x){paste0(x, "%")})+
+labs(
+title = 'Median Income vs College Degree in Manhattan',
+x = 'College Degree',
+y = 'Median Income',
+color = 'City and Outter Boroughs'
+)+
+theme_classic()
+df_nyc %>% mutate(City_Outter_Boroughs = ifelse(county_code == 'Manhattan','City','Outter Boroughs')) %>%
+ggplot( aes(x = perc_over15_high_skill, y = median_income))+
+geom_point(aes(color = City_Outter_Boroughs), alpha = .5, size = 2)+
+scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+scale_x_continuous(labels = function(x){paste0(x, "%")})+
+labs(
+title = 'Median Income vs Skilled Labor in Manhattan',
+x = 'Skilled Labor',
+y = 'Median Income',
+color = 'City and Outter Boroughs'
+)+
+theme_classic()
+ggplot(df_nyc, aes(x = reorder(county_code, home_ownership), y = home_ownership)) +
+geom_violin() +
+geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = median_income)) +
+theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+scale_color_viridis(name = "Median Income",
+labels = function(x){paste0("$", x/1000, "K")}) +
+scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+labs(
+x = "County",
+y = "Home Ownership",
+title = "Home Ownership in Manhattan and its Outter Boroughss"
+) +
+geom_hline(yintercept = median(df_nyc$home_ownership), color = "red", linetype = "dashed")

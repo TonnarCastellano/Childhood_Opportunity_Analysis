@@ -1,0 +1,4 @@
+"0","# Import data"
+"0",""
+"0","df <- read_csv(""/Users/tonnarcastellano/Desktop/R/Castellano_EDA20/eda20-team5-project/data.csv"")"
+"0",""

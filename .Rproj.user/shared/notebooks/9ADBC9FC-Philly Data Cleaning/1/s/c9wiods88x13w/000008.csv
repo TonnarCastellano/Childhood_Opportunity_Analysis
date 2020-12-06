@@ -1,0 +1,8 @@
+"0","df_philly$county_code = factor(df_philly$county_code, levels = c( 'Bucks',"
+"0","     'Chester',"
+"0","     'Delaware',"
+"0","     'Montgomery',"
+"0","     'Philadelphia'))"
+"0",""
+"0","df_philly_2010 <- df_philly %>% filter(year == ""2010"")"
+"0","df_philly_2015 <- df_philly %>% filter(year == ""2015"")"

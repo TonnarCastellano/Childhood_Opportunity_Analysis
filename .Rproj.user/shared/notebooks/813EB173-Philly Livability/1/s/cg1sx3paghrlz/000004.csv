@@ -1,0 +1,12 @@
+"0","df_philly_2015 %>% "
+"0","  mutate(residential_environment = scale(supermarket_nearby) + scale(green_spaces) + scale(walkability)) %>%"
+"0","  group_by(county_code) %>%"
+"0","  summarise(resi_mean = mean(residential_environment)) %>% "
+"0","ggplot(aes(x = reorder(county_code, resi_mean, desc), y = resi_mean, fill=factor(ifelse(county_code==""Philadelphia"",""Highlighted"",""Normal"")))) +"
+"0","  geom_bar(stat = ""identity"") +"
+"0","  scale_fill_manual(name = ""area"", values=c(""red"",""grey50"")) +"
+"0","  theme_bw() + "
+"0","  labs(title = ""2015 Philly Index of good residential environment by conuty"", subtitle = ""Residential environment = Near Supermarket + Green Space Access + Walkability"", y = ""Index of good residential environment"", x = ""County"" ) +"
+"0","  theme(axis.text.x = element_text(angle = 60, hjust = 1))"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"

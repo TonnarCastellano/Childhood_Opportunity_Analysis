@@ -1,0 +1,20 @@
+---
+title: "NYC Data Cleaning"
+---
+
+```{r}
+df_nyc <- Cities %>% filter(stateusps == 'NY')
+```
+
+
+```{r}
+df_tx <- df_tx %>% mutate(group = ifelse(county_code == "NYC", "Manhattan", "Outter Boroughs")) %>%
+  select(group, everything())
+```
+
+
+```{r}
+df_tx$county_code = factor(df_tx$county_code, levels = c("Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island"))
+
+df_nyc_2015 <- df_nyc %>% filter(year == "2015")
+```

@@ -1,0 +1,4 @@
+"0","df_tx$county_code = factor(df_tx$county_code, levels = c(""Harris"", ""Fort Bend"", ""Montgomery"", ""Waller"", ""Liberty""))"
+"0",""
+"0","df_tx_2010 <- df_tx %>% filter(year == ""2010"")"
+"0","df_tx_2015 <- df_tx %>% filter(year == ""2015"")"

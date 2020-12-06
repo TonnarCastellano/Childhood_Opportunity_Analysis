@@ -1,0 +1,6 @@
+"0","df<- df %>% "
+"0","  mutate(num_edu_center = exp(ED_PRXECE)) %>%"
+"0","  mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%"
+"0","  mutate(num_waste_dump_site = exp(HE_SUPRFND)) %>%"
+"0","  mutate(population = exp(HE_RSEI)) %>%"
+"0","  select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)"
