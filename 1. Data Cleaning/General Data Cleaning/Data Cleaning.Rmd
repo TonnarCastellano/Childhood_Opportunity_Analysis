@@ -183,11 +183,9 @@ Cities <-
     county_code == 'Philadelphia'|
     county_code == 'Harris'|
     county_code == 'Montgomery'|
-    county_code == 'Galveston'|
-    county_code == 'Brazoria'|
+    county_code == 'Fort Bend'|
     county_code == 'Liberty'|
     county_code == 'Waller'|
-    county_code == 'Chambers'|
     county_code == 'Venture'|
     county_code == 'Orange'|
     county_code == 'San Bernardino'|

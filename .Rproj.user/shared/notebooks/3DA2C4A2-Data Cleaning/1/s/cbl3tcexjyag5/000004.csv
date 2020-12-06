@@ -1,5 +1,0 @@
-"0","extra_NA<- df %>% "
-"0","  select_if(function(x) any(is.na(x))) %>% "
-"0","  summarise_each(funs(sum(is.na(.))))"
-"0",""
-"0","extra_NA"

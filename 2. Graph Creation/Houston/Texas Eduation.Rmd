@@ -56,14 +56,14 @@ ggplot() +
 ## Data Collection
 ```{r}
 ap_hou<- df_tx %>%
-  filter(county_code== "Harris")
-hou_wealthy <- ap_hou%>%
-  filter(median_income > income$mean)
+  filter(county_code== "Harris" & median_income < income$mean)
+hou_wealthy <- df_tx %>%
+  filter(county_code== "Harris" & median_income > income$mean)
 
 ap_sub_hou<- df_tx %>%
-  filter(county_code != "Harris")
-sub_hou_wealthy <- ap_hou%>%
-  filter(median_income > income$mean)
+  filter(county_code != "Harris" & median_income < income$mean)
+sub_hou_wealthy <- df_tx %>%
+  filter(county_code != "Harris" & median_income > income$mean)
 ```
 
 ##  Graphs
@@ -90,7 +90,7 @@ ggplot()+
   geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_hou_wealthy)+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
-    subtitle="Suburban Areas",
+    subtitle="Houston Suburban Areas",
     x="Ratio of Upper Level Students in AP Courses",
     y="Frequency",
     color = colors,

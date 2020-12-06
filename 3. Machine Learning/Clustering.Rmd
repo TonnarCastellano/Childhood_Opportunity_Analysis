@@ -3,8 +3,9 @@ title: "Clustering"
 ---
 
 ```{r}
-Cities <- data.table(Cities)
-clustering_df <- data.frame(Cities[, c(1:7) := NULL])
+Cities_2015 <- Cities %>% filter(year == 2015)
+Cities_2015 <- data.table(Cities_2015)
+clustering_df <- data.frame(Cities_2015[, c(1:7) := NULL])
 #variables in the graphs
 clustering_df <- clustering_df %>%  select(county_code,AP_students,third_g_math,third_g_read,hs_grads,perc_over15_high_skill,college_deg,median_income,home_ownership,supermarket_nearby,green_spaces,walkability)
 #all non irrelevant variables
@@ -13,31 +14,55 @@ clustering_df <- clustering_df %>%  select(county_code,AP_students,third_g_math,
 
 
 ```{r}
-clustering_df <- aggregate( .~ county_code, data = clustering_df, FUN = mean)
+Tonnar <- aggregate( .~ county_code, data = clustering_df, FUN = mean)
+Soyeon <- clustering_df %>% group_by(county_code) %>%
+  summarise(AP_students = mean(AP_students, na.rm = TRUE),
+            college_deg = mean(college_deg, na.rm = TRUE),
+            hs_grads = mean(hs_grads, na.rm = TRUE),
+            third_g_math = mean(third_g_math, na.rm = TRUE),
+            third_g_read = mean(third_g_read, na.rm = TRUE),
+            supermarket = mean(supermarket_nearby, na.rm = TRUE),
+            green_spaces = mean(green_spaces, na.rm = TRUE),
+            walkability = mean(walkability, na.rm = TRUE),
+            home_ownership = mean(home_ownership, na.rm = TRUE),
+            perc_over15_high_skill = mean(perc_over15_high_skill, na.rm = TRUE),
+            median_income = mean(median_income, na.rm = TRUE)
+            )
 ```
 
 
 ```{r}
-county_code <- clustering_df %>% select(county_code)
-clustering_df <- clustering_df %>% select(-county_code)
-clustering_df <- scale(clustering_df)
+county_code <- Tonnar %>% select(county_code)
+Tonnar <- Tonnar %>% select(-county_code)
+Soyeon <- Soyeon %>% select(-county_code)
+Tonnar <- scale(Tonnar)
+Soyeon <- scale(Soyeon)
+
+
+Tonnar<-Tonnar[,order(colnames(Tonnar))]
+Soyeon<-Soyeon[,order(colnames(Soyeon))]
 ```
 
 
 ```{r}
-k_means <- kmeans(clustering_df,3,25)
+Tonnar_k_means <- kmeans(Tonnar,3,1000)
+Soyeon_k_means <- kmeans(Soyeon,3,1000)
 ```
 
 
 ```{r}
-cluster <- k_means$cluster
-df_graph <- cbind(county_code, clustering_df)
-df_graph <- cbind(cluster, df_graph)
+Tonnar_cluster <- Tonnar_k_means$cluster
+Tonnar_df_graph <- cbind(county_code,Tonnar_cluster)
+Tonnar_df_graph <- cbind(Tonnar_cluster, Tonnar_df_graph)
+
+Soyeon_cluster <- Soyeon_k_means$cluster
+Soyeon_df_graph <- cbind(county_code,Soyeon_cluster)
+Soyeon_df_graph <- cbind(Soyeon_cluster, Soyeon_df_graph)
 ```
 
 
 ```{r}
-fviz_cluster(k_means, data = clustering_df, geom = "point") + 
+fviz_cluster(Tonnar_k_means, data = Tonnar, geom = "point") + 
   theme_minimal() + 
   theme(text = element_text(color = "black")) + 
   ggtitle("") + 
@@ -46,14 +71,25 @@ fviz_cluster(k_means, data = clustering_df, geom = "point") +
   theme(panel.border = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())+
-  geom_label_repel(aes(label = df_graph$county_code)) + 
+  geom_label_repel(aes(label = Tonnar_df_graph$county_code)) + 
   theme(legend.position = "none")
 
+fviz_cluster(Soyeon_k_means, data = Soyeon, geom = "point") + 
+  theme_minimal() + 
+  theme(text = element_text(color = "black")) + 
+  ggtitle("") + 
+  theme(text = element_text (color = "black")) + 
+  theme_bw() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  geom_label_repel(aes(label = Soyeon_df_graph$county_code)) + 
+  theme(legend.position = "none")
 ```
 
 
 ```{r}
-ggRadar(df_graph, aes(group = cluster), 
+ggRadar(Tonnar_df_graph, aes(group = Tonnar_cluster), 
              rescale = FALSE,
              size = 1, 
              interactive = FALSE, 

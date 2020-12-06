@@ -92,7 +92,7 @@ ggplot()+
   geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_philly_wealthy)+
   labs(
     title="Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.",
-    subtitle="Suburban Areas",
+    subtitle="Philadelphia Suburban Areas",
     x="Ratio of Upper Level Students in AP Courses",
     y="Frequency",
     color = colors,
