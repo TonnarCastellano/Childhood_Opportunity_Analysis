@@ -1,0 +1,26 @@
+---
+title: "Philly Data Cleaning"
+---
+
+
+```{r}
+df_philly <- Cities %>% filter(stateusps == 'PA')
+```
+
+
+```{r}
+df_philly <- df_philly %>% mutate(group = ifelse(county_code == "Philadelphia", "city", "suburb")) %>%
+  select(group, everything())
+```
+
+
+```{r}
+df_philly$county_code = factor(df_philly$county_code, levels = c( 'Bucks',
+     'Chester',
+     'Delaware',
+     'Montgomery',
+     'Philadelphia'))
+
+df_philly_2010 <- df_philly %>% filter(year == "2010")
+df_philly_2015 <- df_philly %>% filter(year == "2015")
+```

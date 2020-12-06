@@ -1,0 +1,18 @@
+---
+title: "NYC Livability"
+---
+
+# Livability Scores 
+```{r}
+df_nyc_2015 %>% filter(!is.na(supermarket_nearby)) %>%
+  filter(!is.na(green_spaces)) %>%
+  filter(!is.na(walkability)) %>%
+  mutate(residential_environment = scale(supermarket_nearby) + scale(green_spaces) + scale(walkability)) %>%
+  group_by(county_code) %>%
+  summarise(resi_mean = mean(residential_environment)) %>% ggplot( aes(x = reorder(county_code, resi_mean, desc), y = resi_mean, fill=factor(ifelse(county_code=="Manhattan","Highlighted","Normal")))) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(name = "area", values=c("red","grey50")) +
+  theme_bw() + 
+  labs(title = "2015 New York City Index of good residential environment by conuty", subtitle = "Residential environment = Near Supermarket + Green Space Access + Walkability", y = "Index of good residential environment", x = "County" ) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
