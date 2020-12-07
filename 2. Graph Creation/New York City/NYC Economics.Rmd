@@ -59,6 +59,8 @@ ggplot(df_nyc, aes(x = reorder(county_code, home_ownership), y = median_income))
     title = "Home Ownership in NYC and its Outer Boroughs"
   ) +
   geom_hline(yintercept = median(df_nyc$median_income), color = "red", linetype = "dashed")+
-  theme_bw()
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = text_color))
+  
 ```
 

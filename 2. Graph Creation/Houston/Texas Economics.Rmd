@@ -58,6 +58,7 @@ ggplot(df_tx, aes(x = reorder(county_code, home_ownership), y = median_income)) 
     title = "Home Ownership in Texas and its Suburbs"
   ) +
   geom_hline(yintercept = median(df_tx$median_income), color = "red", linetype = "dashed")+
-  theme_bw()
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = text_color))
 ```
 

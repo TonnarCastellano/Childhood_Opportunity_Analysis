@@ -1,6 +1,5 @@
 ---
 title: "R Notebook"
-output: html_notebook
 ---
 
 # College vs Income
@@ -36,7 +35,7 @@ df_la %>% mutate(City_Suburb = ifelse(county_code == 'Los Angeles','City','Subur
     y = 'Median Income',
     color = 'City and Suburb'
   )+
-  theme_classic()
+  theme_classic()+
 ```
 
 
@@ -57,5 +56,6 @@ ggplot(df_la, aes(x = reorder(county_code, home_ownership), y = median_income)) 
     title = "Home Ownership in LA and its Suburbs"
   ) +
   geom_hline(yintercept = median(df_la$median_income), color = "red", linetype = "dashed")+
-  theme_bw()
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = text_color))
 ```

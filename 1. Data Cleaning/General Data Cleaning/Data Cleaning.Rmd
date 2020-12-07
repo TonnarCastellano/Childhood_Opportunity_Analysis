@@ -194,6 +194,5 @@ Cities <-
   ) %>% na.omit()
 
 income <-Cities %>% select(median_income) %>% summarise(mean = mean(median_income))
-print(income$mean)
-
+text_color <- c('red','black','black','black','black','black','black')
 ```
