@@ -55,7 +55,7 @@ ggplot(df_nyc, aes(x = reorder(county_code, home_ownership), y = median_income))
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
     labs(
     x = "County",
-    y = "Home Ownership",
+    y = "Median Income",
     title = "Home Ownership in NYC and its Outer Boroughs"
   ) +
   geom_hline(yintercept = median(df_nyc$median_income), color = "red", linetype = "dashed")+
