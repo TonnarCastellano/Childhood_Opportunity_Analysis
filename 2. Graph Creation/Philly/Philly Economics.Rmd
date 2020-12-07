@@ -7,7 +7,7 @@ library(viridis)
 
 
 ```{r}
-df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = college_deg, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
@@ -25,7 +25,7 @@ df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','
 
 ## Graphs
 ```{r}
-df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
@@ -44,28 +44,30 @@ df_philly %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','
 
 ## Graphs
 ```{r}
-ggplot(df_philly, aes(x = reorder(county_code, home_ownership), y = median_income)) +
+ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_income)) +
   geom_violin() +
   geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   scale_color_viridis(name = "% Home Ownership",
+                      breaks = seq(0,100,25),
                       labels = function(x){paste0(x, "%")}) +
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
     labs(
     x = "County",
     y = "Median Income",
-    title = "Home Ownership in Philly and its Suburbs"
+    title = "Home Ownership in Philly and its Suburbs",
+    subtitle = "Vs. Philadelphia Area Median Income"
   ) +
-  geom_hline(yintercept = median(df_philly$median_income), color = "red", linetype = "dashed")+
+  geom_hline(yintercept = median(df_philly_2015$median_income), color = "red", linetype = "dashed")+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = text_color))
+  theme(axis.text.x = element_text(colour = text_color))
 ```
 
 # Income
 
 ## Data Selection
 ```{r}
-income_Philly <- df_philly %>%
+income_Philly <- df_philly_2015 %>%
   group_by(county_code)%>%
   summarise(mean_inc = mean(median_income))%>%
   mutate(deviation= mean_inc - income$mean)%>%
@@ -81,12 +83,13 @@ ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
     title="Household income in Philadelphia",
-    subtitle="We can see how each city is above or below the area average, $66K",
+    subtitle="Vs. Philadelphia Area Average, $66K",
     x = "City",
     y = "Amount Difference"
   )+
   theme_bw()+
-  theme(axis.text.y = element_text(angle = 45, hjust = 1, colour = text_color))
+  theme(axis.text.y = element_text(colour = text_color)) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
 ```
 
 
