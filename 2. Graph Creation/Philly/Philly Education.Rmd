@@ -9,13 +9,13 @@ title: "Philly Education"
 df_philly_2015 %>% 
   mutate(Area = ifelse(county_code == "Philadelphia", "City", "Suburb")) %>% 
   ggplot(aes(x = county_code, y = third_g_math + third_g_read, fill = Area, alpha = Area)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.alpha=0) +
   geom_hline(data = df_philly_2015, aes(yintercept = mean(third_g_read, na.rm = TRUE) + mean(third_g_math, na.rm = TRUE)), col = "red",linetype='dotted') + 
   scale_fill_manual(values = c("#69b3a2", "grey")) +
   scale_alpha_manual(values=c(1,0.1)) +
   theme_classic() +
   labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores", 
-       subtitle = "Vs. U.S nation's average", 
+       subtitle = "Vs. National Average", 
        x = "County", 
        y = "3rd Grades Reading & Math scores")
 ```
@@ -45,12 +45,12 @@ ggplot() +
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in High School Graduation Rate", 
        x = "Percent Graduated",
-       y = "Region",
+       y = "County",
        color = 'Year')+
   theme_classic()+
   theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = grad_color))+
-   scale_x_continuous(
-            breaks=seq(50, 100, 2),
+  scale_x_continuous(
+            breaks=seq(50, 100, 5),
             labels = function(x){paste0(x*1, '%')}
             )
 ```
@@ -79,7 +79,7 @@ ggplot()+
   geom_density(aes(AP_students, fill= "Less than $66K"), alpha = .2, data = ap_philly)+
   geom_density(aes(AP_students, fill= "More than $66K"), alpha = .2,  data = philly_wealthy)+
   labs(
-    title="11th and 12th Grade Students in at least one AP course",
+    title="AP Courses vs. Income",
     subtitle="Philadelphia",
     x="Ratio of Upper Level Students in AP Courses",
     y="Frequency",
@@ -93,7 +93,7 @@ ggplot()+
   geom_density(aes(AP_students, fill="Less than $66K"), alpha = .2, data = ap_sub_philly)+
   geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_philly_wealthy)+
   labs(
-    title="11th and 12th Grade Students in at least one AP course",
+    title="AP Courses vs. Income",
     subtitle="Philadelphia Suburban Areas",
     x="Ratio of Upper Level Students in AP Courses",
     y="Frequency",
