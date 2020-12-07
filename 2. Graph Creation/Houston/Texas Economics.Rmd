@@ -45,18 +45,19 @@ df_tx %>% mutate(City_Suburb = ifelse(county_code == 'Harris','City','Suburb')) 
 # Homeownership
 
 ```{r}
-ggplot(df_tx, aes(x = reorder(county_code, home_ownership), y = home_ownership)) +
+ggplot(df_tx, aes(x = reorder(county_code, home_ownership), y = median_income)) +
   geom_violin() +
-  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = median_income)) +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   scale_color_viridis(name = "Median Income",
-                      labels = function(x){paste0("$", x/1000, "K")}) +
-  scale_y_continuous(labels = function(x){paste0(x, "%")}) +
+                      labels = function(x){paste0(x, "%")}) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
     labs(
     x = "County",
     y = "Home Ownership",
-    title = "Home Ownership in Houston and its Suburbs"
+    title = "Home Ownership in Texas and its Suburbs"
   ) +
-  geom_hline(yintercept = median(df_tx$home_ownership), color = "red", linetype = "dashed")
+  geom_hline(yintercept = median(df_tx$median_income), color = "red", linetype = "dashed")+
+  theme_bw()
 ```
 

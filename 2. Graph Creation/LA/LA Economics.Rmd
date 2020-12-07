@@ -38,3 +38,24 @@ df_la %>% mutate(City_Suburb = ifelse(county_code == 'Los Angeles','City','Subur
   )+
   theme_classic()
 ```
+
+
+# Homeownship
+
+## Graphs
+```{r}
+ggplot(df_la, aes(x = reorder(county_code, home_ownership), y = median_income)) +
+  geom_violin() +
+  geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  scale_color_viridis(name = "Median Income",
+                      labels = function(x){paste0(x, "%")}) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
+    labs(
+    x = "County",
+    y = "Home Ownership",
+    title = "Home Ownership in LA and its Suburbs"
+  ) +
+  geom_hline(yintercept = median(df_la$median_income), color = "red", linetype = "dashed")+
+  theme_bw()
+```
