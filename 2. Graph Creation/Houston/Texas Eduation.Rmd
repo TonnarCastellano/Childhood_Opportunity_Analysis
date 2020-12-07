@@ -97,6 +97,7 @@ ggplot()+
     fill = 'AP Students'
   )+
   theme_classic()+
-  theme(panel.grid.major.x=element_line())
+  theme(panel.grid.major.x=element_line())+
+  theme(axis.text.y = element_text(angle = 45, hjust = 1, colour = text_color))
 ```
 

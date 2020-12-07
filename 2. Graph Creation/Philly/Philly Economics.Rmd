@@ -61,5 +61,33 @@ ggplot(df_philly, aes(x = reorder(county_code, home_ownership), y = median_incom
   theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = text_color))
 ```
 
+# Income
+
+## Data Selection
+```{r}
+income_Philly <- df_philly %>%
+  group_by(county_code)%>%
+  summarise(mean_inc = mean(median_income))%>%
+  mutate(deviation= mean_inc - income$mean)%>%
+  arrange(desc(mean_inc))
+```
+
+## Graphs
+```{r}
+ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
+           fill = deviation >0))+
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
+  labs(
+    title="Household income in Philadelphia",
+    subtitle="We can see how each city is above or below the area average, $66K",
+    x = "City",
+    y = "Amount Difference"
+  )+
+  theme_bw()+
+  theme(axis.text.y = element_text(angle = 45, hjust = 1, colour = text_color))
+```
+
 
 
