@@ -14,7 +14,10 @@ df_philly_2015 %>%
   scale_fill_manual(values = c("#69b3a2", "grey")) +
   scale_alpha_manual(values=c(1,0.1)) +
   theme_classic() +
-  labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores by County", subtitle = "The red lines show U.S nation's average", x = "County", y = "3rd Grades Reading & Math score")
+  labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores", 
+       subtitle = "Vs. U.S nation's average", 
+       x = "County", 
+       y = "3rd Grades Reading & Math scores")
 ```
 
 ----
@@ -42,7 +45,8 @@ ggplot() +
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in High School Graduation Rate", 
        x = "Percent Graduated",
-       y = "Region")+
+       y = "Region",
+       color = 'Year')+
   theme_classic()+
   theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = grad_color))+
    scale_x_continuous(

@@ -83,7 +83,7 @@ ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
     title="Household income in Philadelphia",
-    subtitle="Vs. Philadelphia Area Average, $66K",
+    subtitle="Vs. Philadelphia Area Average Median Income, $66K",
     x = "City",
     y = "Amount Difference"
   )+
