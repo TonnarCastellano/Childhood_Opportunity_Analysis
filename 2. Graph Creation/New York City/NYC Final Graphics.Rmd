@@ -147,7 +147,7 @@ options(scipen = 999)
 ```
 
 ```{r}
-df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','Borough')) %>% 
+df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan',' City','Borough')) %>% 
   ggplot( aes(x = college_deg, y = median_income))+
   geom_point(aes(color = City_Borough), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
@@ -164,7 +164,7 @@ df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','
 ## High Skill vs Income
 
 ```{r}
-df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','Borough')) %>% 
+df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan',' City','Borough')) %>% 
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
   geom_point(aes(color = City_Borough), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
@@ -221,7 +221,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
   labs(
     title="Household Income in Manhattan",
     subtitle="Vs. NYC Area Average Median Income, $64K",
-    x = "City",
+    x = "County",
     y = "Amount Difference"
   )+
   theme_bw()+
