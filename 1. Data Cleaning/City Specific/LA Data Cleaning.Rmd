@@ -8,6 +8,7 @@ df_la <- Cities %>% filter(stateusps == 'CA')
 
 
 ```{r}
+df_la$county_code = factor(df_la$county_code, levels = c("Los Angeles", "Orange", "Kern","Ventura", "San Bernardino"))
 df_la <- df_la %>% mutate(group = ifelse(county_code == "LA", "city", "suburb")) %>%
   select(group, everything())
 ```
@@ -16,3 +17,9 @@ df_la <- df_la %>% mutate(group = ifelse(county_code == "LA", "city", "suburb"))
 ```{r}
 df_la_2015 <- df_la %>% filter(year == "2015")
 ```
+
+
+```{r}
+unique(df_la_2015$county_code)
+```
+

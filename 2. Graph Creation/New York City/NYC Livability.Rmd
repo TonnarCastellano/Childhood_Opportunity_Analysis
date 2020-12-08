@@ -4,15 +4,39 @@ title: "NYC Livability"
 
 # Livability Scores 
 ```{r}
-df_nyc_2015 %>% filter(!is.na(supermarket_nearby)) %>%
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df_nyc_2015_live <- df_nyc_2015 %>% filter(!is.na(supermarket_nearby)) %>%
   filter(!is.na(green_spaces)) %>%
   filter(!is.na(walkability)) %>%
-  mutate(residential_environment = scale(supermarket_nearby) + scale(green_spaces) + scale(walkability)) %>%
+  mutate(norm_super = normalize(supermarket_nearby)) %>% 
+  mutate(norm_green = normalize(green_spaces)) %>% 
+  mutate(norm_walk = normalize(walkability)) %>% 
   group_by(county_code) %>%
-  summarise(resi_mean = mean(residential_environment)) %>% ggplot( aes(x = reorder(county_code, resi_mean, desc), y = resi_mean, fill=factor(ifelse(county_code=="Manhattan","Highlighted","Normal")))) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(name = "area", values=c("red","grey50")) +
-  theme_bw() + 
-  labs(title = "2015 New York City Index of good residential environment by conuty", subtitle = "Residential environment = Near Supermarket + Green Space Access + Walkability", y = "Index of good residential environment", x = "County" ) +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+  summarise(norm_super = mean(norm_super), norm_green = mean(norm_green), norm_walk = mean(norm_walk)) %>% 
+  mutate(total =norm_super+norm_green+norm_walk)
+
+df_nyc_2015_live <- as.data.frame(df_nyc_2015_live)
+county_code <- df_nyc_2015_live %>% pull(county_code)
+norm_super <- df_nyc_2015_live %>% pull(norm_super)
+norm_green <- df_nyc_2015_live %>% pull(norm_green)
+norm_walk <- df_nyc_2015_live %>% pull(norm_walk)
+
+df2 <- rbind(
+        data.frame(county_code, "count" = norm_super, "Factor"="Near Supermarket"),
+        data.frame(county_code, "count" = norm_green, "Factor"="Green Space"),
+        data.frame(county_code, "count" = norm_walk, "Factor" = "Walkability")
+)
+
+ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
+  geom_bar(stat="identity")+
+  scale_fill_brewer(palette="Set3") +
+  theme_bw()+
+  labs(title = "NYC Index of good residential environment by county", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of good residential environment", x = "County", fill = 'Factor')+
+  theme(axis.text.x = element_text(color = text_color))
+
+
+
 ```

@@ -15,11 +15,7 @@ df_philly <- df_philly %>% mutate(group = ifelse(county_code == "Philadelphia", 
 
 
 ```{r}
-df_philly$county_code = factor(df_philly$county_code, levels = c( 'Bucks',
-     'Chester',
-     'Delaware',
-     'Montgomery',
-     'Philadelphia'))
+df_philly$county_code = factor(df_philly$county_code, levels = c("Philadelphia", "Delaware", "Montgomery", "Bucks", "Chester"))
 
 df_philly_2010 <- df_philly %>% filter(year == "2010")
 df_philly_2015 <- df_philly %>% filter(year == "2015")

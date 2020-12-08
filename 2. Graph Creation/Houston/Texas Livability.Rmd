@@ -4,20 +4,6 @@ title: "Texas Livability"
 
 # Livability Scores 
 ```{r}
-df_tx_2015 %>% filter(!is.na(supermarket_nearby)) %>%
-  filter(!is.na(green_spaces)) %>%
-  filter(!is.na(walkability)) %>%
-  mutate(residential_environment = scale(supermarket_nearby) + scale(green_spaces) + scale(walkability)) %>%
-  group_by(county_code) %>%
-  summarise(resi_mean = mean(residential_environment)) %>% ggplot( aes(x = reorder(county_code, resi_mean, desc), y = resi_mean, fill=factor(ifelse(county_code=="Harris","Highlighted","Normal")))) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(name = "area", values=c("red","grey50")) +
-  theme_bw() + 
-  labs(title = "2015 Houston Index of good residential environment by conuty", subtitle = "Residential environment = Near Supermarket + Green Space Access + Walkability", y = "Index of good residential environment", x = "County" ) +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-```
-
-```{r}
 df_tx_2015
 ```
 ```{r}
@@ -52,15 +38,13 @@ df2 <- rbind(
         data.frame(county_code, "count" = norm_walk, "Factor" = "Walkability")
 )
 
-a <- ifelse(df_tx_2015_live$county_name == "Harris", "red", "black")
 
-
-ggplot(df2, aes(x = df2$county_code, y = df2$count), fill = df2$Factor) +
+ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   geom_bar(stat="identity")+
-  theme_bw() + 
-  labs(title = "Houston Index of good residential environment by conuty", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of good residential environment", x = "County") +
   scale_fill_brewer(palette="Set3") +
-  theme(axis.text.x = element_text(colour = a))
+  theme_bw()+
+  labs(title = "Houston Index of good residential environment by conuty", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of good residential environment", x = "County", fill = 'Factor')+
+  theme(axis.text.x = element_text(color = text_color))
 ```
 
 ```{r}

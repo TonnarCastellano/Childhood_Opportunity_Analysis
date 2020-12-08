@@ -186,11 +186,11 @@ Cities <-
     county_code == 'Fort Bend'|
     county_code == 'Liberty'|
     county_code == 'Waller'|
-    county_code == 'Venture'|
+    county_code == 'Ventura'|
     county_code == 'Orange'|
     county_code == 'San Bernardino'|
-    county_code == 'Los Angeles'|
-    county_code == 'Kern'
+    county_code == 'Kern'|
+    county_code == 'Los Angeles'
   ) %>% na.omit()
 
 income <-Cities %>% select(median_income) %>% summarise(mean = mean(median_income))
