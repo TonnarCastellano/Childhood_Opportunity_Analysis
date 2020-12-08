@@ -403,6 +403,7 @@ ggplot() +
   theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = text_color))+
   scale_x_continuous(
             breaks=seq(50, 100, 5),
+            limits = c(65,100),
             labels = function(x){paste0(x*1, '%')}
             )
 ```
