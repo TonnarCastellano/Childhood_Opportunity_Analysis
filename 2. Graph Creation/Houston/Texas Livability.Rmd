@@ -16,3 +16,54 @@ df_tx_2015 %>% filter(!is.na(supermarket_nearby)) %>%
   labs(title = "2015 Houston Index of good residential environment by conuty", subtitle = "Residential environment = Near Supermarket + Green Space Access + Walkability", y = "Index of good residential environment", x = "County" ) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
+
+```{r}
+df_tx_2015
+```
+```{r}
+df_tx_2015$county_code = factor(df_tx_2015$county_code, levels = c("Harris", "Fort Bend", "Montgomery", "Waller", "Liberty"))
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+df_tx_2015_live <- df_tx_2015 %>% filter(!is.na(supermarket_nearby)) %>%
+  filter(!is.na(green_spaces)) %>%
+  filter(!is.na(walkability)) %>%
+  mutate(norm_super = normalize(supermarket_nearby)) %>% 
+  mutate(norm_green = normalize(green_spaces)) %>% 
+  mutate(norm_walk = normalize(walkability)) %>% 
+  group_by(county_code) %>%
+  summarise(norm_super = mean(norm_super), norm_green = mean(norm_green), norm_walk = mean(norm_walk)) %>% 
+  mutate(total =norm_super+norm_green+norm_walk)
+
+df_tx_2015_live <- as.data.frame(df_tx_2015_live)
+county_code <- df_tx_2015_live %>% pull(county_code)
+norm_super <- df_tx_2015_live %>% pull(norm_super)
+norm_green <- df_tx_2015_live %>% pull(norm_green)
+norm_walk <- df_tx_2015_live %>% pull(norm_walk)
+
+df2 <- rbind(
+        data.frame(county_code, "count" = norm_super, "Factor"="Near Supermarket"),
+        data.frame(county_code, "count" = norm_green, "Factor"="Green Space"),
+        data.frame(county_code, "count" = norm_walk, "Factor" = "Walkability")
+)
+
+a <- ifelse(df_tx_2015_live$county_name == "Harris", "red", "black")
+
+
+ggplot(df2, aes(x = df2$county_code, y = df2$count), fill = df2$Factor) +
+  geom_bar(stat="identity")+
+  theme_bw() + 
+  labs(title = "Houston Index of good residential environment by conuty", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of good residential environment", x = "County") +
+  scale_fill_brewer(palette="Set3") +
+  theme(axis.text.x = element_text(colour = a))
+```
+
+```{r}
+df2
+```
+
