@@ -295,7 +295,7 @@ ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_
     labs(
     x = "County",
     y = "Median Income",
-    title = "Home Ownership in Philly and its Suburbs",
+    title = "Home Ownership in Philadelphia and its Suburbs",
     subtitle = "Vs. Philadelphia Area Median Income"
   ) +
   geom_hline(yintercept = median(df_philly_2015$median_income), color = "red", linetype = "dashed")+

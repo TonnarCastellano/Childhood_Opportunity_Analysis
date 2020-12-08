@@ -193,7 +193,7 @@ ggplot(df_la_2015, aes(x = reorder(county_code, home_ownership), y = median_inco
     labs(
     x = "County",
     y = "Median Income",
-    title = "Home Ownership in la and its Suburbs",
+    title = "Home Ownership in Los Angeles and its Suburbs",
     subtitle = "Vs. Los Angeles Area Median Income"
   ) +
   geom_hline(yintercept = median(df_la_2015$median_income), color = "red", linetype = "dashed")+

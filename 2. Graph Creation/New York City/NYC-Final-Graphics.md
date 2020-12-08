@@ -1,22 +1,81 @@
----
-title: "Philadelphia Final Graphs"
-output: github_document
----
+NYC Final Graphs
+================
 
 # General Data Cleaning
-```{r}
+
+``` r
 library(tidyverse)
+```
+
+    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+
+    ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+    ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.4.0     ✓ forcats 0.5.0
+
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
 library(viridis)
+```
+
+    ## Loading required package: viridisLite
+
+``` r
 library(factoextra)
+```
+
+    ## Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+
+``` r
 library(data.table)
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, first, last
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     transpose
+
+``` r
 library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
 df <- read_csv("/Users/TyPainter1/Desktop/Masters/Fall 2020/DS-5610/eda20-team5-project/data.csv")
+```
+
+    ## 
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## cols(
+    ##   .default = col_double(),
+    ##   geoid = col_character(),
+    ##   msaname15 = col_character(),
+    ##   countyfips = col_character(),
+    ##   statefips = col_character(),
+    ##   stateusps = col_character()
+    ## )
+    ## ℹ Use `spec()` for the full column specifications.
+
+``` r
 # Separate the column "msaname15" into "city", "state", "size" and "no_mean"
 df <- df %>%
   separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
+```
+
+    ## Warning: Expected 4 pieces. Additional pieces discarded in 61334 rows [337, 338,
+    ## 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354,
+    ## 355, 356, ...].
+
+``` r
 df<- df %>%
   mutate(num_edu_center = exp(ED_PRXECE)) %>%
   mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%
@@ -59,6 +118,28 @@ df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)
 extra_NA<- df %>%
   select_if(function(x) any(is.na(x))) %>%
   summarise_each(funs(sum(is.na(.))))
+```
+
+    ## Warning: `summarise_each_()` is deprecated as of dplyr 0.7.0.
+    ## Please use `across()` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+    ## Warning: `funs()` is deprecated as of dplyr 0.8.0.
+    ## Please use a list of either functions or lambdas: 
+    ## 
+    ##   # Simple named list: 
+    ##   list(mean = mean, median = median)
+    ## 
+    ##   # Auto named with `tibble::lst()`: 
+    ##   tibble::lst(mean, median)
+    ## 
+    ##   # Using lambdas
+    ##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+``` r
 NA_subset <- df[rowSums(is.na(df)) > 0, ]
 # Delete some rows having more NAs than meaningful values.
 df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))
@@ -91,6 +172,23 @@ df <- df %>%
   mutate(county_code = replace(county_code,county_code == "06037", "Los Angeles"))%>%
   mutate(county_code = replace(county_code,county_code == "06029", "Kern"))%>%
   mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))
+```
+
+    ## Warning: Problem with `mutate()` input `city`.
+    ## ℹ argument is not numeric or logical: returning NA
+    ## ℹ Input `city` is `(structure(function (..., .x = ..1, .y = ..2, . = ..1) ...`.
+
+    ## Warning in mean.default(.x, na.rm = TRUE): argument is not numeric or logical:
+    ## returning NA
+
+    ## Warning: Problem with `mutate()` input `size`.
+    ## ℹ argument is not numeric or logical: returning NA
+    ## ℹ Input `size` is `(structure(function (..., .x = ..1, .y = ..2, . = ..1) ...`.
+
+    ## Warning in mean.default(.x, na.rm = TRUE): argument is not numeric or logical:
+    ## returning NA
+
+``` r
 Cities <-
   df %>% filter(
     county_code == 'Manhattan'|
@@ -118,25 +216,24 @@ income <-Cities %>% select(median_income) %>% summarise(mean = mean(median_incom
 text_color <- c('red','black','black','black','black','black','black')
 ```
 
-# Philadelphia Data Cleaning
-```{r}
-df_philly <- Cities %>% filter(stateusps == 'PA')
+# Manhattan Data Cleaning
 
-df_philly <- df_philly %>% mutate(group = ifelse(county_code == "Philadelphia", "city", "suburb")) %>%
+``` r
+df_nyc <- Cities %>% filter(stateusps == 'NY')
+
+df_nyc <- df_nyc %>% mutate(group = ifelse(county_code == "NYC", "Manhattan", "Borough")) %>%
   select(group, everything())
 
-df_philly$county_code = factor(df_philly$county_code, levels = c("Philadelphia", "Delaware", "Montgomery", "Bucks", "Chester"))
+df_nyc$county_code = factor(df_nyc$county_code, levels = c("Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island"))
 
-df_philly_2010 <- df_philly %>% filter(year == "2010")
-df_philly_2015 <- df_philly %>% filter(year == "2015")
+df_nyc_2015 <- df_nyc %>% filter(year == "2015")
 ```
 
 # Economics
 
-
 ## College Degree vs Income
 
-```{r}
+``` r
 library(tidyverse)
 library(viridis)
 library(factoextra)
@@ -147,42 +244,46 @@ library(ggrepel)
 options(scipen = 999)
 ```
 
-```{r}
-df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+``` r
+df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','Borough')) %>% 
   ggplot( aes(x = college_deg, y = median_income))+
-  geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
+  geom_point(aes(color = City_Borough), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
-    title = 'Median Income vs. College Degree in Philadelphia',
+    title = 'Median Income vs. College Degree in Manhattan',
     x = 'College Degree',
     y = 'Median Income',
-    color = 'City or Suburb'
+    color = 'City or Borough'
   )+
   theme_classic()
 ```
+
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ## High Skill vs Income
 
-```{r}
-df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
+``` r
+df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','Borough')) %>% 
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
-  geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
+  geom_point(aes(color = City_Borough), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
-    title = 'Median Income vs. Skilled Labor in Philadelphia',
+    title = 'Median Income vs. Skilled Labor in Manhattan',
     x = 'Skilled Labor',
     y = 'Median Income',
-    color = 'City or Suburb'
+    color = 'City or Borough'
   )+
   theme_classic()
 ```
 
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
 ## Homeownership
 
-```{r}
-ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_income)) +
+``` r
+ggplot(df_nyc_2015, aes(x = reorder(county_code, home_ownership), y = median_income)) +
   geom_violin() +
   geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
@@ -193,33 +294,40 @@ ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_
     labs(
     x = "County",
     y = "Median Income",
-    title = "Home Ownership in Philadelphia and its Suburbs",
-    subtitle = "Vs. Philadelphia Area Median Income"
+    title = "Home Ownership in Manhattan and its Boroughs",
+    subtitle = "Vs. NYC Area Median Income"
   ) +
-  geom_hline(yintercept = median(df_philly_2015$median_income), color = "red", linetype = "dashed")+
+  geom_hline(yintercept = median(df_nyc_2015$median_income), color = "red", linetype = "dashed")+
   theme_bw()+
   theme(axis.text.x = element_text(colour = text_color))
 ```
 
+    ## Warning: Vectorized input to `element_text()` is not officially supported.
+    ## Results may be unexpected or may change in future versions of ggplot2.
+
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
 ## Income
 
-```{r}
-income_Philly <- df_philly_2015 %>%
+``` r
+income_nyc <- df_nyc_2015 %>%
   group_by(county_code)%>%
   summarise(mean_inc = mean(median_income))%>%
   mutate(deviation= mean_inc - income$mean)%>%
   arrange(desc(mean_inc))
 ```
 
-```{r}
-ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
+ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
   coord_flip()+
   scale_fill_discrete(name = "", labels = c("Below Average", "Above Average"))+
   labs(
-    title="Household Income in Philadelphia",
-    subtitle="Vs. Philadelphia Area Average Median Income, $70K",
+    title="Household Income in Manhattan",
+    subtitle="Vs. NYC Area Average Median Income, $64K",
     x = "City",
     y = "Amount Difference"
   )+
@@ -228,44 +336,55 @@ ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
 ```
 
+    ## Warning: Vectorized input to `element_text()` is not officially supported.
+    ## Results may be unexpected or may change in future versions of ggplot2.
+
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
 # Education
 
 ## Third Grade Reading Scores
 
-```{r}
-df_philly_2015 %>% 
-  mutate(Area = ifelse(county_code == "Philadelphia", "City", "Suburb")) %>% 
+``` r
+df_nyc_2015 %>% 
+  mutate(Area = ifelse(county_code == "Manhattan", "City", "Borough")) %>% 
   ggplot(aes(x = county_code, y = third_g_math + third_g_read, fill = Area, alpha = Area)) +
   geom_boxplot(outlier.alpha=0) +
-  geom_hline(data = df_philly_2015, aes(yintercept = mean(third_g_read, na.rm = TRUE) + mean(third_g_math, na.rm = TRUE)), col = "red",linetype='dotted') + 
+  geom_hline(data = df_nyc_2015, aes(yintercept = mean(third_g_read, na.rm = TRUE) + mean(third_g_math, na.rm = TRUE)), col = "red",linetype='dotted') + 
   scale_fill_manual(values = c("#69b3a2", "grey")) +
   scale_alpha_manual(values=c(1,0.1)) +
   theme_classic() +
-  labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores", 
+  labs(title = "2015 Manhattan 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "County", 
        y = "3rd Grades Reading & Math scores")
 ```
 
-## Highschool Graduation Rates 
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-```{r}
-grad_rates_philly <- df_philly %>%
+## High School Graduation Rates
+
+``` r
+data <-Cities %>% 
+  drop_na(hs_grads)
+#average grad rates in 2015
+grad_rates_nyc <- data %>%
+  filter(county_code %in% c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"))%>%
   group_by(county_code,year)%>%
   summarise(mean_grad = mean(hs_grads))
-
-grad_rates_good <- grad_rates_philly %>% filter(county_code %in% c('Philadelphia',
-    'Bucks',
-    'Chester',
-    'Delaware'))
-
-grad_rates_bad <-  grad_rates_philly %>% filter(county_code %in% c("Montgomery"))
 ```
 
-```{r}
+    ## `summarise()` regrouping output by 'county_code' (override with `.groups` argument)
+
+``` r
+grad_rates_good <- grad_rates_nyc %>% filter(county_code %in% c("Manhattan", "Bronx", "Brooklyn", "Queens"))
+grad_rates_bad <-  grad_rates_nyc %>% filter(county_code %in% c("Staten Island"))
+```
+
+``` r
 grad_color = c("black", "black", "black", "black", "red")
 ggplot() + 
-  geom_point(data = grad_rates_philly,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
+  geom_point(data = grad_rates_nyc,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in High School Graduation Rate", 
@@ -280,43 +399,34 @@ ggplot() +
             )
 ```
 
-## AP Classes 
+    ## Warning: Vectorized input to `element_text()` is not officially supported.
+    ## Results may be unexpected or may change in future versions of ggplot2.
 
-```{r}
-ap_philly<- df_philly_2015 %>%
-  filter(county_code == "Philadelphia" & median_income < income$mean)
-philly_wealthy <- df_philly %>%
-  filter(county_code== "Philadelphia" & median_income > income$mean)
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-ap_sub_philly<- df_philly_2015 %>%
-  filter(county_code !="Philadelphia" & median_income < income$mean)
-sub_philly_wealthy <- df_philly %>%
-  filter(county_code != "Philadelphia" & median_income > income$mean)
+## AP Classes
+
+``` r
+ap_nyc<- df_nyc_2015 %>%
+  filter(county_code == "Manhattan" & median_income < income$mean)
+nyc_wealthy <- df_nyc %>%
+  filter(county_code== "Manhattan" & median_income > income$mean)
+
+ap_sub_nyc<- df_nyc_2015 %>%
+  filter(county_code !="Manhattan" & median_income < income$mean)
+sub_nyc_wealthy <- df_nyc %>%
+  filter(county_code != "Manhattan" & median_income > income$mean)
 ```
 
-```{r}
+``` r
 colors <- c("More than $66K" = "light blue", "Less than $66K" = "pink")
 
 ggplot()+
-  geom_density(aes(AP_students, fill= "Less than $66K"), alpha = .2, data = ap_philly)+
-  geom_density(aes(AP_students, fill= "More than $66K"), alpha = .2,  data = philly_wealthy)+
+  geom_density(aes(AP_students, fill= "Less than $66K"), alpha = .2, data = ap_nyc)+
+  geom_density(aes(AP_students, fill= "More than $66K"), alpha = .2,  data = nyc_wealthy)+
   labs(
     title="AP Courses vs. Income",
-    subtitle="Philadelphia",
-    x="Ratio of Upper Level Students in AP Courses",
-    y="Frequency",
-    color = colors,
-    fill = 'AP Students'
-  )+
-  theme_classic()+
-  theme(panel.grid.major.x=element_line())
-
-ggplot()+
-  geom_density(aes(AP_students, fill="Less than $66K"), alpha = .2, data = ap_sub_philly)+
-  geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_philly_wealthy)+
-  labs(
-    title="AP Courses vs. Income",
-    subtitle="Philadelphia Suburban Areas",
+    subtitle="Manhattan",
     x="Ratio of Upper Level Students in AP Courses",
     y="Frequency",
     color = colors,
@@ -326,14 +436,34 @@ ggplot()+
   theme(panel.grid.major.x=element_line())
 ```
 
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+ggplot()+
+  geom_density(aes(AP_students, fill="Less than $66K"), alpha = .2, data = ap_sub_nyc)+
+  geom_density(aes(AP_students, fill="More than $66K"), alpha = .2,  data = sub_nyc_wealthy)+
+  labs(
+    title="AP Courses vs. Income",
+    subtitle="NYC Boroughs",
+    x="Ratio of Upper Level Students in AP Courses",
+    y="Frequency",
+    color = colors,
+    fill = 'AP Students'
+  )+
+  theme_classic()+
+  theme(panel.grid.major.x=element_line())
+```
+
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
 # Livability
 
-```{r}
+``` r
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-df_philly_2015_live <- df_philly_2015 %>% filter(!is.na(supermarket_nearby)) %>%
+df_nyc_2015_live <- df_nyc_2015 %>% filter(!is.na(supermarket_nearby)) %>%
   filter(!is.na(green_spaces)) %>%
   filter(!is.na(walkability)) %>%
   mutate(norm_super = normalize(supermarket_nearby)) %>% 
@@ -342,12 +472,16 @@ df_philly_2015_live <- df_philly_2015 %>% filter(!is.na(supermarket_nearby)) %>%
   group_by(county_code) %>%
   summarise(norm_super = mean(norm_super), norm_green = mean(norm_green), norm_walk = mean(norm_walk)) %>% 
   mutate(total =norm_super+norm_green+norm_walk)
+```
 
-df_philly_2015_live <- as.data.frame(df_philly_2015_live)
-county_code <- df_philly_2015_live %>% pull(county_code)
-norm_super <- df_philly_2015_live %>% pull(norm_super)
-norm_green <- df_philly_2015_live %>% pull(norm_green)
-norm_walk <- df_philly_2015_live %>% pull(norm_walk)
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
+df_nyc_2015_live <- as.data.frame(df_nyc_2015_live)
+county_code <- df_nyc_2015_live %>% pull(county_code)
+norm_super <- df_nyc_2015_live %>% pull(norm_super)
+norm_green <- df_nyc_2015_live %>% pull(norm_green)
+norm_walk <- df_nyc_2015_live %>% pull(norm_walk)
 
 df2 <- rbind(
         data.frame(county_code, "count" = norm_super, "Factor"="Near Supermarket"),
@@ -359,6 +493,17 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   geom_bar(stat="identity")+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
-  labs(title = "Philadelphia Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
+  labs(title = "NYC Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
   theme(axis.text.x = element_text(color = text_color))
 ```
+
+    ## Warning: Vectorized input to `element_text()` is not officially supported.
+    ## Results may be unexpected or may change in future versions of ggplot2.
+
+    ## Warning: Use of `df2$county_code` is discouraged. Use `county_code` instead.
+
+    ## Warning: Use of `df2$count` is discouraged. Use `count` instead.
+
+    ## Warning: Use of `df2$Factor` is discouraged. Use `Factor` instead.
+
+![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
