@@ -338,7 +338,7 @@ ggplot(income_la, aes(x = reorder(county_code, deviation), y = deviation,
   labs(
     title="Household Income in Los Angeles",
     subtitle="Vs. Los Angeles Area Average Median Income, $69K",
-    x = "City",
+    x = "County",
     y = "Amount Difference"
   )+
   theme_bw()+
