@@ -331,7 +331,7 @@ ggplot(income_tx, aes(x = reorder(county_code, deviation), y = deviation,
   labs(
     title="Household Income in Houston",
     subtitle="Vs. Houston Area Average Median Income, $64K",
-    x = "City",
+    x = "County",
     y = "Amount Difference"
   )+
   theme_bw()+
