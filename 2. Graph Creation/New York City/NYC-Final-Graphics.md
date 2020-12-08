@@ -359,7 +359,7 @@ df_nyc_2015 %>%
   labs(title = "2015 Manhattan 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "County", 
-       y = "3rd Grades Reading & Math scores")
+       y = "3rd Grades Reading & Math scores") 
 ```
 
 ![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
