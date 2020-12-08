@@ -330,7 +330,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
   labs(
     title="Household Income in Manhattan",
     subtitle="Vs. NYC Area Average Median Income, $64K",
-    x = "County",
+    x = "Borough",
     y = "Amount Difference"
   )+
   theme_bw()+
