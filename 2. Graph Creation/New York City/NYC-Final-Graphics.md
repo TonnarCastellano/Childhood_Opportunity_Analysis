@@ -293,7 +293,7 @@ ggplot(df_nyc_2015, aes(x = reorder(county_code, home_ownership), y = median_inc
                       labels = function(x){paste0(x, "%")}) +
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
     labs(
-    x = "County",
+    x = "Borough",
     y = "Median Income",
     title = "Home Ownership in Manhattan and its Boroughs",
     subtitle = "Vs. NYC Area Median Income"
@@ -358,7 +358,7 @@ df_nyc_2015 %>%
   theme_classic() +
   labs(title = "2015 Manhattan 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
-       x = "County", 
+       x = "Borough", 
        y = "3rd Grades Reading & Math scores") 
 ```
 
@@ -391,7 +391,7 @@ ggplot() +
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
   labs(title = "Change in High School Graduation Rate", 
        x = "Percent Graduated",
-       y = "County",
+       y = "Borough",
        color = 'Year')+
   theme_classic()+
   theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = grad_color))+
@@ -496,7 +496,7 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   geom_bar(stat="identity")+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
-  labs(title = "NYC Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
+  labs(title = "NYC Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "Borough", fill = 'Factor')+
   theme(axis.text.x = element_text(color = text_color))
 ```
 
