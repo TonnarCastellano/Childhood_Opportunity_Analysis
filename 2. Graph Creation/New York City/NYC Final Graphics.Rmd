@@ -363,4 +363,4 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   theme_bw()+
   labs(title = "NYC Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
   theme(axis.text.x = element_text(color = text_color))
-```
+``` 

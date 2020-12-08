@@ -224,7 +224,7 @@ df_nyc <- Cities %>% filter(stateusps == 'NY')
 df_nyc <- df_nyc %>% mutate(group = ifelse(county_code == "NYC", "Manhattan", "Borough")) %>%
   select(group, everything())
 
-df_nyc$county_code = factor(df_nyc$county_code, levels = c("Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island"))
+df_nyc$county_code <- factor(df_nyc$county_code, levels = c("Manhattan", "Bronx", "Queens", "Brooklyn", "Staten Island"))
 
 df_nyc_2015 <- df_nyc %>% filter(year == "2015")
 ```
@@ -251,7 +251,7 @@ df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
-    title = 'Median Income vs. College Degree in Manhattan',
+    title = 'Median Income vs. College Degree in NYC',
     x = 'College Degree',
     y = 'Median Income',
     color = 'City or Borough'
@@ -270,7 +270,7 @@ df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
-    title = 'Median Income vs. Skilled Labor in Manhattan',
+    title = 'Median Income vs. Skilled Labor in NYC',
     x = 'Skilled Labor',
     y = 'Median Income',
     color = 'City or Borough'
@@ -283,6 +283,7 @@ df_nyc_2015 %>% mutate(City_Borough = ifelse(county_code == 'Manhattan','City','
 ## Homeownership
 
 ``` r
+o.color = c("black", "red", "black", "black", "black")
 ggplot(df_nyc_2015, aes(x = reorder(county_code, home_ownership), y = median_income)) +
   geom_violin() +
   geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
@@ -299,7 +300,7 @@ ggplot(df_nyc_2015, aes(x = reorder(county_code, home_ownership), y = median_inc
   ) +
   geom_hline(yintercept = median(df_nyc_2015$median_income), color = "red", linetype = "dashed")+
   theme_bw()+
-  theme(axis.text.x = element_text(colour = text_color))
+  theme(axis.text.x = element_text(colour = o.color))
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -320,6 +321,7 @@ income_nyc <- df_nyc_2015 %>%
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
+i.color = c("black", "black", "black", "black", "red")
 ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
            fill = deviation >0))+
   geom_bar(stat = "identity")+
@@ -332,7 +334,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
     y = "Amount Difference"
   )+
   theme_bw()+
-  theme(axis.text.y = element_text(colour = text_color)) +
+  theme(axis.text.y = element_text(colour = i.color)) +
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
 ```
 
@@ -347,7 +349,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
 
 ``` r
 df_nyc_2015 %>% 
-  mutate(Area = ifelse(county_code == "Manhattan", "City", "Borough")) %>% 
+  mutate(Area = ifelse(county_code == "Manhattan", " City", "Borough")) %>% 
   ggplot(aes(x = county_code, y = third_g_math + third_g_read, fill = Area, alpha = Area)) +
   geom_boxplot(outlier.alpha=0) +
   geom_hline(data = df_nyc_2015, aes(yintercept = mean(third_g_read, na.rm = TRUE) + mean(third_g_math, na.rm = TRUE)), col = "red",linetype='dotted') + 
@@ -382,7 +384,7 @@ grad_rates_bad <-  grad_rates_nyc %>% filter(county_code %in% c("Staten Island")
 ```
 
 ``` r
-grad_color = c("black", "black", "black", "black", "red")
+grad_color = c("black", "black", "red", "black", "black")
 ggplot() + 
   geom_point(data = grad_rates_nyc,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
@@ -392,9 +394,10 @@ ggplot() +
        y = "County",
        color = 'Year')+
   theme_classic()+
-  theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = text_color))+
+  theme(panel.grid.major.x=element_line(), axis.text.y = element_text(colour = grad_color))+
   scale_x_continuous(
             breaks=seq(50, 100, 5),
+            limits = c(65,100),
             labels = function(x){paste0(x*1, '%')}
             )
 ```
