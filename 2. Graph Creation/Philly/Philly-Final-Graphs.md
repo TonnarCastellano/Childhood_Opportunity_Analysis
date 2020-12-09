@@ -249,7 +249,7 @@ options(scipen = 999)
 df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = college_deg, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c (0,250000))+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
     title = 'Median Income vs. College Degree in Philadelphia',
@@ -268,7 +268,7 @@ df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','Ci
 df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(0,250000))+
   scale_x_continuous(labels = function(x){paste0(x, "%")})+
   labs(
     title = 'Median Income vs. Skilled Labor in Philadelphia',
@@ -291,7 +291,7 @@ ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_
   scale_color_viridis(name = "% Home Ownership",
                       breaks = seq(0,100,25),
                       labels = function(x){paste0(x, "%")}) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits=c(0,250000)) +
     labs(
     x = "County",
     y = "Median Income",
@@ -334,7 +334,7 @@ ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
   )+
   theme_bw()+
   theme(axis.text.y = element_text(colour = text_color)) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(-25000,30000)) 
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -358,7 +358,8 @@ df_philly_2015 %>%
   labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "County", 
-       y = "3rd Grades Reading & Math scores")
+       y = "3rd Grades Reading & Math scores") +
+  scale_y_continuous(limits=c(0,1000))
 ```
 
 ![](Philly-Final-Graphs_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
@@ -496,7 +497,8 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
   labs(title = "Philadelphia Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
-  theme(axis.text.x = element_text(color = text_color))
+  theme(axis.text.x = element_text(color = text_color)) +
+  scale_y_continuous(limits=c(0,1.5))
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
