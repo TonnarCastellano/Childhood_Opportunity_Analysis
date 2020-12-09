@@ -26,10 +26,10 @@ grad_rates_la <- df_la %>%
   group_by(county_code,year)%>%
   summarise(mean_grad = mean(hs_grads))
 
-grad_rates_good <- grad_rates_la %>% filter(county_code %in% c("Los Angeles", 'Venture',
-'Orange','San Bernardino', "Kern"))
+grad_rates_good <- grad_rates_la %>% filter(county_code %in% c(,'San Bernardino'))
 
-grad_rates_bad <-  grad_rates_la %>% filter(county_code %in% c("Montgomery"))
+grad_rates_bad <-  grad_rates_la %>% filter(county_code %in% c("Los Angeles", 'Venture',
+'Orange', "Kern"))
 ```
 
 ```{r}
