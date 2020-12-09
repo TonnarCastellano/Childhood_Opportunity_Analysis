@@ -166,7 +166,7 @@ df_tx_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Harris','City','Subur
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
-  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  scale_x_continuous(labels = function(x){paste0(x, "%")}, limits  = c(0,100))+
   labs(
     title = 'Median Income vs. Skilled Labor in Houston',
     x = 'Skilled Labor',
