@@ -499,7 +499,8 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
   labs(title = "Houston Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
-  theme(axis.text.x = element_text(color = text_color))
+  theme(axis.text.x = element_text(color = text_color)) +
+  scale_y_continuous(limits=c(0,1.5))
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
