@@ -441,6 +441,7 @@ ggplot()+
     fill = 'AP Students'
   )+
   scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,3.5), breaks = seq(0,3.5,.5))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -460,6 +461,7 @@ ggplot()+
     fill = 'AP Students'
   )+
   scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,3.5), breaks = seq(0,3.5,.5))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
