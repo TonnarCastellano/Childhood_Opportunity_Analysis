@@ -9,11 +9,10 @@ library(tidyverse)
 library(viridis)
 library(factoextra)
 library(data.table)
-library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
-df <- read_csv("/Users/TyPainter1/Desktop/Masters/Fall 2020/DS-5610/eda20-team5-project/data.csv")
+df <- read_csv("/Users/Nelson/Desktop/R/eda20-team5-project/data.csv")
 # Separate the column "msaname15" into "city", "state", "size" and "no_mean"
 df <- df %>%
   separate(msaname15, c("city", "state", "size", "no_mean"), sep = " ")
@@ -140,7 +139,6 @@ library(tidyverse)
 library(viridis)
 library(factoextra)
 library(data.table)
-library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
@@ -151,7 +149,7 @@ df_tx_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Harris','City','Subur
   ggplot( aes(x = college_deg, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
   scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
-  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  scale_x_continuous(limits = c(0,100),labels = function(x){paste0(x, "%")})+
   labs(
     title = 'Median Income vs. College Degree in Houston',
     x = 'College Degree',
@@ -270,7 +268,7 @@ ggplot() +
   geom_point(data = grad_rates_tx,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
-  labs(title = "Change in High School Graduation Rate", 
+  labs(title = "Change in Houston High School Graduation Rate", 
        x = "Percent Graduated",
        y = "County",
        color = 'Year')+
@@ -311,6 +309,7 @@ ggplot()+
     color = colors,
     fill = 'AP Students'
   )+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 
@@ -325,6 +324,7 @@ ggplot()+
     color = colors,
     fill = 'AP Students'
   )+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
