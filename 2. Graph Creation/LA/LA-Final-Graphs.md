@@ -343,7 +343,7 @@ ggplot(income_la, aes(x = reorder(county_code, deviation), y = deviation,
   )+
   theme_bw()+
   theme(axis.text.y = element_text(colour = la_color)) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits=c(-25000,30000)) 
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -367,7 +367,8 @@ df_la_2015 %>%
   labs(title = "2015 Los Angeles 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "County", 
-       y = "3rd Grades Reading & Math scores")
+       y = "3rd Grades Reading & Math scores") +
+  scale_y_continuous(limits=c(0,1000))
 ```
 
 ![](LA-Final-Graphs_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
@@ -503,7 +504,8 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
   labs(title = "Los Angeles Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
-  theme(axis.text.x = element_text(color = text_color))
+  theme(axis.text.x = element_text(color = text_color)) +
+  scale_y_continuous(limits=c(0,1.5))
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
