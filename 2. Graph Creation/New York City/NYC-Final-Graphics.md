@@ -335,7 +335,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
   )+
   theme_bw()+
   theme(axis.text.y = element_text(colour = i.color)) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(-25000,30000)) 
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -359,7 +359,8 @@ df_nyc_2015 %>%
   labs(title = "2015 Manhattan 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "Borough", 
-       y = "3rd Grades Reading & Math scores") 
+       y = "3rd Grades Reading & Math scores") +
+  scale_y_continuous(limits=c(0,1000))
 ```
 
 ![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
