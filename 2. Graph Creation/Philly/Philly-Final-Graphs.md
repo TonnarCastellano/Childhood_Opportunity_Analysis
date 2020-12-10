@@ -46,11 +46,10 @@ library(data.table)
     ##     transpose
 
 ``` r
-library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
-df <- read_csv("/Users/TyPainter1/Desktop/Masters/Fall 2020/DS-5610/eda20-team5-project/data.csv")
+df <- read_csv("/Users/Nelson/Desktop/R/eda20-team5-project/data.csv")
 ```
 
     ## 
@@ -239,7 +238,6 @@ library(tidyverse)
 library(viridis)
 library(factoextra)
 library(data.table)
-library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
@@ -249,8 +247,8 @@ options(scipen = 999)
 df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = college_deg, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
-  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c (0,250000))+
+  scale_x_continuous(labels = function(x){paste0(x, "%")}, limits = c(0,100))+
   labs(
     title = 'Median Income vs. College Degree in Philadelphia',
     x = 'College Degree',
@@ -268,8 +266,8 @@ df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','Ci
 df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','City','Suburb')) %>% 
   ggplot( aes(x = perc_over15_high_skill, y = median_income))+
   geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")})+
-  scale_x_continuous(labels = function(x){paste0(x, "%")})+
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(0,250000))+
+  scale_x_continuous(labels = function(x){paste0(x, "%")}, limits = c(0,100))+
   labs(
     title = 'Median Income vs. Skilled Labor in Philadelphia',
     x = 'Skilled Labor',
@@ -286,12 +284,13 @@ df_philly_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Philadelphia','Ci
 ``` r
 ggplot(df_philly_2015, aes(x = reorder(county_code, home_ownership), y = median_income)) +
   geom_violin() +
+    scale_fill_gradient2(limits = c(0,100))+
   geom_point(position = position_jitter(width = 0.4), alpha = .35, aes(color = home_ownership)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   scale_color_viridis(name = "% Home Ownership",
                       breaks = seq(0,100,25),
                       labels = function(x){paste0(x, "%")}) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) +
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits=c(0,250000)) +
     labs(
     x = "County",
     y = "Median Income",
@@ -334,7 +333,7 @@ ggplot(income_Philly, aes(x = reorder(county_code, deviation), y = deviation,
   )+
   theme_bw()+
   theme(axis.text.y = element_text(colour = text_color)) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(-25000,30000)) 
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -358,7 +357,8 @@ df_philly_2015 %>%
   labs(title = "2015 Philadelphia 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "County", 
-       y = "3rd Grades Reading & Math scores")
+       y = "3rd Grades Reading & Math scores") +
+  scale_y_continuous(limits=c(0,1000))
 ```
 
 ![](Philly-Final-Graphs_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
@@ -388,7 +388,7 @@ ggplot() +
   geom_point(data = grad_rates_philly,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
-  labs(title = "Change in High School Graduation Rate", 
+  labs(title = "Change in Philadelphia High School Graduation Rate", 
        x = "Percent Graduated",
        y = "County",
        color = 'Year')+
@@ -435,6 +435,8 @@ ggplot()+
     fill = 'AP Students'
   )+
   theme_classic()+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,8), breaks = seq(0,8,1))+
   theme(panel.grid.major.x=element_line())
 ```
 
@@ -453,6 +455,8 @@ ggplot()+
     fill = 'AP Students'
   )+
   theme_classic()+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,8), breaks = seq(0,8,1))+
   theme(panel.grid.major.x=element_line())
 ```
 
@@ -496,7 +500,8 @@ ggplot(df2, aes(x = df2$county_code, y = df2$count, fill = df2$Factor))+
   scale_fill_brewer(palette="Set3") +
   theme_bw()+
   labs(title = "Philadelphia Index of Residential Environment", subtitle = "Livability = Green Space Access + Near Supermarket + Walkability", y = "Index of Residential Environment", x = "County", fill = 'Factor')+
-  theme(axis.text.x = element_text(color = text_color))
+  theme(axis.text.x = element_text(color = text_color)) +
+  scale_y_continuous(limits=c(0,1.5))
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.

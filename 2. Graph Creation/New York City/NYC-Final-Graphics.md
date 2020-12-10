@@ -25,32 +25,10 @@ library(viridis)
     ## Loading required package: viridisLite
 
 ``` r
-library(factoextra)
-```
-
-    ## Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
-
-``` r
-library(data.table)
-```
-
-    ## 
-    ## Attaching package: 'data.table'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     between, first, last
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     transpose
-
-``` r
-library(ggradar)
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
-df <- read_csv("/Users/TyPainter1/Desktop/Masters/Fall 2020/DS-5610/eda20-team5-project/data.csv")
+df <- read_csv("/Users/Nelson/Desktop/R/eda20-team5-project/data.csv")
 ```
 
     ## 
@@ -237,8 +215,26 @@ df_nyc_2015 <- df_nyc %>% filter(year == "2015")
 library(tidyverse)
 library(viridis)
 library(factoextra)
+```
+
+    ## Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+
+``` r
 library(data.table)
-library(ggradar)
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, first, last
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     transpose
+
+``` r
 library(ggiraphExtra)
 library(ggrepel)
 options(scipen = 999)
@@ -335,7 +331,7 @@ ggplot(income_nyc, aes(x = reorder(county_code, deviation), y = deviation,
   )+
   theme_bw()+
   theme(axis.text.y = element_text(colour = i.color)) +
-  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}) 
+  scale_y_continuous(labels = function(x){paste0("$", x/1000, "K")}, limits = c(-25000,30000)) 
 ```
 
     ## Warning: Vectorized input to `element_text()` is not officially supported.
@@ -359,7 +355,8 @@ df_nyc_2015 %>%
   labs(title = "2015 Manhattan 3rd Grades Reading and Math Scores", 
        subtitle = "Vs. National Average", 
        x = "Borough", 
-       y = "3rd Grades Reading & Math scores") 
+       y = "3rd Grades Reading & Math scores") +
+  scale_y_continuous(limits=c(0,1000))
 ```
 
 ![](NYC-Final-Graphics_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
@@ -389,7 +386,7 @@ ggplot() +
   geom_point(data = grad_rates_nyc,aes(x = mean_grad, y = county_code, color = factor(year)), size = 4, alpha = .8)+
   geom_line(data = grad_rates_good, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
   geom_line(data = grad_rates_bad, aes(x = mean_grad, y = county_code), arrow = arrow(length=unit(0.30,"cm"), ends="first", type = "closed"))+
-  labs(title = "Change in High School Graduation Rate", 
+  labs(title = "Change in NYC High School Graduation Rate", 
        x = "Percent Graduated",
        y = "Borough",
        color = 'Year')+
@@ -435,6 +432,8 @@ ggplot()+
     color = colors,
     fill = 'AP Students'
   )+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,8), breaks = seq(0,8,1))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
@@ -453,6 +452,8 @@ ggplot()+
     color = colors,
     fill = 'AP Students'
   )+
+  scale_x_continuous(limits = c(0,2), breaks = seq(0,2,.25))+
+  scale_y_continuous(limits = c(0,8), breaks = seq(0,8,1))+
   theme_classic()+
   theme(panel.grid.major.x=element_line())
 ```
