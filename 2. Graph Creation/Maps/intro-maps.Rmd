@@ -13,13 +13,13 @@ library(readxl)
 library(janitor)
 us_states <- map_data("state")
 
-states <- clean_names(read_excel("/Users/TyPainter1/Desktop/Masters/Fall\ 2020/DS-5610/eda20-team5-project/Ty-Work/intro-maps/states.xlsx"))
+states <- read_excel("/Users/Nelson/Desktop/R/eda20-team5-project/2. Graph Creation/Maps")
 # usa <- ggplot(data = us_states,
 #             mapping = aes(x = long, y = lat,
 #                           group = group))+
 #   geom_polygon(fill = "white", color = "black")
 # usa
-states$name <- tolower(states$name)
+states$name <- tolower(states$Name)
 us_states <- left_join(us_states, states, by = c("region" = "name"))
 #new_df <- left_join(us_states, df, by = c("postal_code"="stateusps"))
 ```
@@ -27,7 +27,7 @@ us_states <- left_join(us_states, states, by = c("region" = "name"))
 # USA
 
 ```{r}
-usa_map <- us_states %>% mutate(state_used = ifelse(postal_code %in% c("PA", "CA", "TX", "NY"), "Yes", "No")) %>% 
+usa_map <- us_states %>% mutate(state_used = ifelse(us_states$`Postal Code` %in% c("PA", "CA", "TX", "NY"), "Yes", "No")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, 
