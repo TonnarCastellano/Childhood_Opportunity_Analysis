@@ -59,12 +59,29 @@ fviz_cluster(kmeans_3, data = df_cluster, geom = "point")  +
   geom_label_repel(aes(label = df_cluster_copy$county_code,
                        col = df_cluster_copy$clusters3))
 ```
+
 ```{r}
 df_radar <- as.data.frame(kmeans_3$centers)
 cluster <- 1:3
 df_radar <- cbind(cluster, df_radar)
 library(ggradar)
 mycolor <- "#1C6193"
+df_radar <- df_radar %>%
+  rename(
+    'AP Enrolled' = AP_students,
+    'College Degree' = college_deg,
+    'High School
+Degree' = hs_grads,
+    '3rd Grade Math' = third_g_math,
+    '3rd Grade Read' = third_g_read,
+    'Near Supermarket' = supermarket_nearby,
+    'Green Space' = green_spaces,
+    'Walkability' = walkability,
+    'Home
+Owned' = home_ownership,
+    'High Skill' = perc_over15_high_skill,
+    'Incoome' = median_income,
+  )
 p <- ggRadar(df_radar, aes(fill = cluster),
              rescale = FALSE, legend.position = "none",
              size = 1, interactive = FALSE, use.label = TRUE, legend.text.size = 3
