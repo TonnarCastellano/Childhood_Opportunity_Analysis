@@ -1,0 +1,7 @@
+"0","income_nyc <- df_nyc_2015 %>%"
+"0","  group_by(county_code)%>%"
+"0","  summarise(mean_inc = mean(median_income))%>%"
+"0","  mutate(deviation= mean_inc - income$mean)%>%"
+"0","  arrange(desc(mean_inc))"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"

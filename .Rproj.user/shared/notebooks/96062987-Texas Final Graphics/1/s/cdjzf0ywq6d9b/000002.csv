@@ -1,0 +1,11 @@
+"0","data <-Cities %>% "
+"0","  drop_na(hs_grads)"
+"0","#average grad rates in 2015"
+"0","grad_rates_tx <- data %>%"
+"0","  filter(county_code %in% c(""Harris"", ""Fort Bend"", ""Montgomery"", ""Waller"", ""Liberty""))%>%"
+"0","  group_by(county_code,year)%>%"
+"0","  summarise(mean_grad = mean(hs_grads))"
+"2","`summarise()` regrouping output by 'county_code' (override with `.groups` argument)
+"
+"0","grad_rates_good <- grad_rates_tx %>% filter(county_code %in% c(""Harris"", ""Fort Bend"", ""Waller"", ""Liberty""))"
+"0","grad_rates_bad <-  grad_rates_tx %>% filter(county_code %in% c(""Montgomery""))"

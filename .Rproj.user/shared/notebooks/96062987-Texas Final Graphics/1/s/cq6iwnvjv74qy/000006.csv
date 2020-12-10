@@ -1,0 +1,15 @@
+"0","df_tx_2015 %>% mutate(City_Suburb = ifelse(county_code == 'Harris','City','Suburb')) %>% "
+"0","  ggplot( aes(x = perc_over15_high_skill, y = median_income))+"
+"0","  geom_point(aes(color = City_Suburb), alpha = .5, size = 2)+"
+"0","  scale_y_continuous(labels = function(x){paste0(""$"", x/1000, ""K"")})+"
+"0","  scale_x_continuous(labels = function(x){paste0(x, ""%"")}, limits  = c(0,100))+"
+"0","  labs("
+"0","    title = 'Median Income vs. Skilled Labor in Houston',"
+"0","    x = 'Skilled Labor',"
+"0","    y = 'Median Income',"
+"0","    color = 'City or Suburb'"
+"0","  )+"
+"0","  theme_classic()"
+"2","Error in mutate(., City_Suburb = ifelse(county_code == ""Harris"", ""City"",  : 
+  object 'df_tx_2015' not found
+"

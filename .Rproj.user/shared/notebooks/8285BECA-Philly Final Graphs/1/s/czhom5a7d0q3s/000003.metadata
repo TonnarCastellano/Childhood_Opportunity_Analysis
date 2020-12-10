@@ -1,0 +1,1 @@
+{"height":432.6328800988875,"width":700.0,"size_behavior":0,"conditions":[[1,"Use of `df2$county_code` is discouraged. Use `county_code` instead."],[1,"Use of `df2$count` is discouraged. Use `count` instead."],[1,"Use of `df2$Factor` is discouraged. Use `Factor` instead."]]}

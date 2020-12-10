@@ -1,0 +1,169 @@
+"0","library(tidyverse)"
+"2","Registered S3 methods overwritten by 'dbplyr':
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+"
+"2","[37m── [1mAttaching packages[22m ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──[39m
+"
+"2","[37m[32m✓[37m [34mggplot2[37m 3.3.2     [32m✓[37m [34mpurrr  [37m 0.3.4
+[32m✓[37m [34mtibble [37m 3.0.4     [32m✓[37m [34mdplyr  [37m 1.0.2
+[32m✓[37m [34mtidyr  [37m 1.1.2     [32m✓[37m [34mstringr[37m 1.4.0
+[32m✓[37m [34mreadr  [37m 1.4.0     [32m✓[37m [34mforcats[37m 0.5.0[39m
+"
+"2","[37m── [1mConflicts[22m ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+[31mx[37m [34mdplyr[37m::[32mfilter()[37m masks [34mstats[37m::filter()
+[31mx[37m [34mdplyr[37m::[32mlag()[37m    masks [34mstats[37m::lag()[39m
+"
+"0","library(viridis)"
+"2","Loading required package: viridisLite
+"
+"0","library(ggiraphExtra)"
+"2","Registered S3 method overwritten by 'htmlwidgets':
+  method           from         
+  print.htmlwidget tools:rstudio
+"
+"0","library(ggrepel)"
+"0","options(scipen = 999)"
+"0","df <- read_csv(""/Users/Nelson/Desktop/R/eda20-team5-project/data.csv"")"
+"2","
+[36m──[39m [1m[1mColumn specification[1m[22m [36m─────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+cols(
+  .default = col_double(),
+  geoid = [31mcol_character()[39m,
+  msaname15 = [31mcol_character()[39m,
+  countyfips = [31mcol_character()[39m,
+  statefips = [31mcol_character()[39m,
+  stateusps = [31mcol_character()[39m
+)
+[36mℹ[39m Use [38;5;251m[48;5;235m[38;5;251m[48;5;235m`spec()`[48;5;235m[38;5;251m[49m[39m for the full column specifications.
+
+"
+"0","# Separate the column ""msaname15"" into ""city"", ""state"", ""size"" and ""no_mean"""
+"0","df <- df %>%"
+"0","  separate(msaname15, c(""city"", ""state"", ""size"", ""no_mean""), sep = "" "")"
+"2","Expected 4 pieces. Additional pieces discarded in 61334 rows [337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, ...]."
+"0","df<- df %>%"
+"0","  mutate(num_edu_center = exp(ED_PRXECE)) %>%"
+"0","  mutate(num_good_edu_center = exp(ED_PRXHQECE)) %>%"
+"0","  mutate(num_waste_dump_site = exp(HE_SUPRFND)) %>%"
+"0","  mutate(population = exp(HE_RSEI)) %>%"
+"0","  select(-ED_PRXECE, -ED_PRXHQECE, -HE_SUPRFND, -HE_RSEI)"
+"0","df <- df %>%"
+"0","  rename(id = `_id`) %>%"
+"0","  rename(geo_id = geoid) %>%"
+"0","  rename(metro_areas = in100) %>%"
+"0","  rename(area_code = msaid15) %>%"
+"0","  rename(county_code = countyfips) %>%"
+"0","  rename(num_under_18 = pop) %>%"
+"0","  rename(AP_students = ED_APENR) %>%"
+"0","  rename(college_deg = ED_ATTAIN) %>%"
+"0","  rename(num_college_enrolled = ED_COLLEGE) %>%"
+"0","  rename(preschoolers = ED_ECENROL) %>%"
+"0","  rename(hs_grads = ED_HSGRAD) %>%"
+"0","  rename(third_g_math = ED_MATH) %>%"
+"0","  rename(third_g_read = ED_READING) %>%"
+"0","  rename(elementary_school_poverty = ED_SCHPOV) %>%"
+"0","  rename(firstsecond_y_teachers =ED_TEACHXP) %>%"
+"0","  rename(supermarket_nearby = HE_FOOD) %>%"
+"0","  rename(green_spaces = HE_GREEN) %>%"
+"0","  rename(days_temp_above90 = HE_HEAT) %>%"
+"0","  rename(phealth_insurance = HE_HLTHINS) %>%"
+"0","  rename(mean_ozone_amount = HE_OZONE) %>%"
+"0","  rename(mean_microparticle = HE_PM25) %>%"
+"0","  rename(housing_vacancy = HE_VACANCY) %>%"
+"0","  rename(walkability = HE_WALK) %>%"
+"0","  rename(below100_poverty = SE_POVRATE) %>%"
+"0","  rename(public_assistance = SE_PUBLIC) %>%"
+"0","  rename(home_ownership = SE_HOME) %>%"
+"0","  rename(perc_over15_high_skill = SE_OCC) %>%"
+"0","  rename(median_income=SE_MHE) %>%"
+"0","  rename(employment_rate = SE_EMPRAT) %>%"
+"0","  rename(commute_over1hour = SE_JOBPROX) %>%"
+"0","  rename(single_parents = SE_SINGLE)"
+"0","df <- df %>% select(-state, -no_mean, -statefips, -num_waste_dump_site)"
+"0","extra_NA<- df %>%"
+"0","  select_if(function(x) any(is.na(x))) %>%"
+"0","  summarise_each(funs(sum(is.na(.))))"
+"2","`summarise_each_()` is deprecated as of dplyr 0.7.0.
+Please use `across()` instead.
+[90mThis warning is displayed once every 8 hours.[39m
+[90mCall `lifecycle::last_warnings()` to see where this warning was generated.[39m"
+"2","`funs()` is deprecated as of dplyr 0.8.0.
+Please use a list of either functions or lambdas: 
+
+  # Simple named list: 
+  list(mean = mean, median = median)
+
+  # Auto named with `tibble::lst()`: 
+  tibble::lst(mean, median)
+
+  # Using lambdas
+  list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+[90mThis warning is displayed once every 8 hours.[39m
+[90mCall `lifecycle::last_warnings()` to see where this warning was generated.[39m"
+"0","NA_subset <- df[rowSums(is.na(df)) > 0, ]"
+"0","# Delete some rows having more NAs than meaningful values."
+"0","df <- df %>% filter((geo_id != 47155980100) & (geo_id != 47145980100) & (geo_id != 47031980100) & (geo_id != 47029980100) & (geo_id != 47009980200) & (geo_id != 47009980100) & (geo_id != 47001980100) & (geo_id != 47037980100) & (geo_id != 47037980200) & (geo_id != 47037013000))"
+"0","df <- df %>%"
+"0","  #NYC"
+"0","  mutate(county_code = replace(county_code, county_code == '36061', 'Manhattan')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '36047', 'Brooklyn')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '36081', 'Queens')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '36005', 'Bronx')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '36085', 'Staten Island'))%>%"
+"0","  #Philly"
+"0","  mutate(county_code = replace(county_code, county_code == '42017', 'Bucks')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '42029', 'Chester')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '42045', 'Delaware')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '42091', 'Montgomery')) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == '42101', 'Philadelphia')) %>%"
+"0","  #Houston"
+"0","  mutate(county_code = replace(county_code, county_code == ""48201"", ""Harris"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48157"", ""Fort Bend"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48339"", ""Montgomery"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48167"", ""Galveston"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48039"", ""Brazoria"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48291"", ""Liberty"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48473"", ""Waller"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""48071"", ""Chambers""))%>%"
+"0","  #LA"
+"0","  mutate(county_code = replace(county_code,county_code == ""06111"", ""Ventura"")) %>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""06059"",""Orange""))%>%"
+"0","  mutate(county_code = replace(county_code, county_code == ""06071"",""San Bernardino""))%>%"
+"0","  mutate(county_code = replace(county_code,county_code == ""06037"", ""Los Angeles""))%>%"
+"0","  mutate(county_code = replace(county_code,county_code == ""06029"", ""Kern""))%>%"
+"0","  mutate_all(~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x))"
+"2","Problem with `mutate()` input `city`.
+[34mℹ[39m argument is not numeric or logical: returning NA
+[34mℹ[39m Input `city` is `(structure(function (..., .x = ..1, .y = ..2, . = ..1) ...`."
+"2","argument is not numeric or logical: returning NA"
+"2","Problem with `mutate()` input `size`.
+[34mℹ[39m argument is not numeric or logical: returning NA
+[34mℹ[39m Input `size` is `(structure(function (..., .x = ..1, .y = ..2, . = ..1) ...`."
+"2","argument is not numeric or logical: returning NA"
+"0","Cities <-"
+"0","  df %>% filter("
+"0","    county_code == 'Manhattan'|"
+"0","    county_code == 'Brooklyn'|"
+"0","    county_code == 'Queens'|"
+"0","    county_code == 'Bronx'|"
+"0","    county_code == 'Staten Island'|"
+"0","    county_code == 'Bucks'|"
+"0","    county_code == 'Chester'|"
+"0","    county_code == 'Delaware'|"
+"0","    county_code == 'Montgomery'|"
+"0","    county_code == 'Philadelphia'|"
+"0","    county_code == 'Harris'|"
+"0","    county_code == 'Montgomery'|"
+"0","    county_code == 'Fort Bend'|"
+"0","    county_code == 'Liberty'|"
+"0","    county_code == 'Waller'|"
+"0","    county_code == 'Ventura'|"
+"0","    county_code == 'Orange'|"
+"0","    county_code == 'San Bernardino'|"
+"0","    county_code == 'Los Angeles'|"
+"0","    county_code == 'Kern'"
+"0","  ) %>% na.omit()"
+"0","income <-Cities %>% select(median_income) %>% summarise(mean = mean(median_income))"
+"0","text_color <- c('red','black','black','black','black','black','black')"

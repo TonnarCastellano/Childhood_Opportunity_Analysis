@@ -1,0 +1,9 @@
+"0","la_color <- c(""black"", ""black"", ""red"", ""black"", ""black"")"
+"0","income_la <- df_la_2015 %>%"
+"0","  group_by(county_code)%>%"
+"0","  summarise(mean_inc = mean(median_income))%>%"
+"0","  mutate(deviation= mean_inc - income$mean)%>%"
+"0","  arrange(desc(mean_inc))"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"0","df_la_2015$county_code = factor(df_la_2015$county_code, levels = c(""Los Angeles"", ""Orange"", ""Kern"",""Ventura"", ""San Bernardino""))"
