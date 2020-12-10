@@ -11,8 +11,8 @@ library(tidyverse)
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
-    ## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
-    ## ✓ readr   1.3.1     ✓ forcats 0.5.0
+    ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+    ## ✓ readr   1.4.0     ✓ forcats 0.5.0
 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
@@ -45,13 +45,13 @@ library(janitor)
 ``` r
 us_states <- map_data("state")
 
-states <- clean_names(read_excel("/Users/TyPainter1/Desktop/Masters/Fall\ 2020/DS-5610/eda20-team5-project/Ty-Work/intro-maps/states.xlsx"))
+states <- read_excel("/Users/TyPainter1/Desktop/Masters/Fall\ 2020/DS-5610/eda20-team5-project/2.\ Graph\ Creation/Maps/states.xlsx")
 # usa <- ggplot(data = us_states,
 #             mapping = aes(x = long, y = lat,
 #                           group = group))+
 #   geom_polygon(fill = "white", color = "black")
 # usa
-states$name <- tolower(states$name)
+states$name <- tolower(states$Name)
 us_states <- left_join(us_states, states, by = c("region" = "name"))
 #new_df <- left_join(us_states, df, by = c("postal_code"="stateusps"))
 ```
@@ -59,7 +59,7 @@ us_states <- left_join(us_states, states, by = c("region" = "name"))
 # USA
 
 ``` r
-usa_map <- us_states %>% mutate(state_used = ifelse(postal_code %in% c("PA", "CA", "TX", "NY"), "Yes", "No")) %>% 
+usa_map <- us_states %>% mutate(state_used = ifelse(us_states$`Postal Code` %in% c("PA", "CA", "TX", "NY"), "Yes", "No")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, 
@@ -86,9 +86,8 @@ usa_map
 ``` r
 us_counties <- map_data("county")
 
-philly_map <- us_counties %>% filter(region %in% c("pennsylvania", "delaware", "maryland", "new jersey")) %>%
-  mutate(county_used = ifelse(subregion %in% c("new castle", "cecil", "burlington", "camden", "gloucester", "salem", "bucks", "chester", "delaware", "philadelphia"), "y",
-                              ifelse(region == "pennsylvania" & subregion == "montgomery", "y", "n"))) %>% 
+philly_map <- us_counties %>% filter(region == "pennsylvania") %>%
+  mutate(county_used = ifelse(subregion %in% c("bucks", "chester", "delaware", "montgomery", "philadelphia"), "y","n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
@@ -140,7 +139,7 @@ nyc_map
 
 ``` r
 la_map <- us_counties %>% filter(region == "california") %>%
-  mutate(county_used = ifelse(subregion %in% c("ventura", "orange", "kern", "riverside", "san bernardino", "los angeles"), "y", "n")) %>% 
+  mutate(county_used = ifelse(subregion %in% c("ventura", "orange", "kern", "san bernardino", "los angeles"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
@@ -166,7 +165,7 @@ la_map
 
 ``` r
 houston_map <- us_counties %>% filter(region == "texas") %>%
-  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "galveston", "montgomery", "brazoria", "chambers", "waller", "liberty"), "y", "n")) %>% 
+  mutate(county_used = ifelse(subregion %in% c("harris", "fort bend", "montgomery", "waller", "liberty"), "y", "n")) %>% 
   ggplot(mapping = aes(x = long, 
                        y = lat, 
                        group = group, fill = county_used)
